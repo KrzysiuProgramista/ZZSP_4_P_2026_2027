@@ -1,9 +1,9 @@
 {
-  "generated": "88f5b0b4b6b678be141d3090a525738c98a46486",
+  "generated": "a0a59ffbcc5aa0ff81b2435343330a3cf132dd24",
   "minChars": 100,
   "threshold": 0.6,
-  "fileCount": 49,
-  "pupilCount": 12,
+  "fileCount": 54,
+  "pupilCount": 13,
   "skipped": [
     {
       "path": "PICZKOWSKI_OSKAR/09_09_2026/tests/__init__.py",
@@ -44,6 +44,20 @@
     },
     {
       "pupils": [
+        "GASIOROWSKI_MICHAL",
+        "PICZKOWSKI_OSKAR"
+      ],
+      "paths": [
+        "GASIOROWSKI_MICHAL/09_09_2026/app/models.py",
+        "PICZKOWSKI_OSKAR/09_09_2026/app/schemas.py"
+      ],
+      "jaccard": 0.4608,
+      "text": 0.8955,
+      "struct": 0.9081,
+      "chars": 1353
+    },
+    {
+      "pupils": [
         "PICZKOWSKI_OSKAR",
         "WASIK_PIOTR"
       ],
@@ -58,6 +72,20 @@
     },
     {
       "pupils": [
+        "GASIOROWSKI_MICHAL",
+        "ZARYCHTA_HUBERT"
+      ],
+      "paths": [
+        "GASIOROWSKI_MICHAL/09_09_2026/app/models.py",
+        "ZARYCHTA_HUBERT/HUBERT_ZARYCHTA/09_09_2026/expenses/models.py"
+      ],
+      "jaccard": 0.431,
+      "text": 0.9004,
+      "struct": 0.9417,
+      "chars": 1287
+    },
+    {
+      "pupils": [
         "PICZKOWSKI_OSKAR",
         "ZARYCHTA_HUBERT"
       ],
@@ -69,6 +97,48 @@
       "text": 0.9061,
       "struct": 0.9614,
       "chars": 1287
+    },
+    {
+      "pupils": [
+        "GASIOROWSKI_MICHAL",
+        "WASIK_PIOTR"
+      ],
+      "paths": [
+        "GASIOROWSKI_MICHAL/09_09_2026/app/models.py",
+        "WASIK_PIOTR/09_09_2026/app/models.py"
+      ],
+      "jaccard": 0.3306,
+      "text": 0.8773,
+      "struct": 0.9338,
+      "chars": 1369
+    },
+    {
+      "pupils": [
+        "GASIOROWSKI_MICHAL",
+        "ZARYCHTA_HUBERT"
+      ],
+      "paths": [
+        "GASIOROWSKI_MICHAL/09_09_2026/app/main.py",
+        "ZARYCHTA_HUBERT/HUBERT_ZARYCHTA/09_09_2026/expenses/main.py"
+      ],
+      "jaccard": 0.3274,
+      "text": 0.7774,
+      "struct": 0.7891,
+      "chars": 2259
+    },
+    {
+      "pupils": [
+        "GASIOROWSKI_MICHAL",
+        "ZARYCHTA_HUBERT"
+      ],
+      "paths": [
+        "GASIOROWSKI_MICHAL/09_09_2026/tests/test_expenses.py",
+        "ZARYCHTA_HUBERT/HUBERT_ZARYCHTA/09_09_2026/tests/test_expenses.py"
+      ],
+      "jaccard": 0.2954,
+      "text": 0.5302,
+      "struct": 0.7293,
+      "chars": 3987
     },
     {
       "pupils": [
@@ -97,76 +167,6 @@
       "text": 0.8825,
       "struct": 0.8756,
       "chars": 1287
-    },
-    {
-      "pupils": [
-        "WASIK_PIOTR",
-        "ZARYCHTA_HUBERT"
-      ],
-      "paths": [
-        "WASIK_PIOTR/09_09_2026/app/main.py",
-        "ZARYCHTA_HUBERT/HUBERT_ZARYCHTA/09_09_2026/expenses/main.py"
-      ],
-      "jaccard": 0.2704,
-      "text": 0.8024,
-      "struct": 0.7604,
-      "chars": 2230
-    },
-    {
-      "pupils": [
-        "JEDRZEJCZAK_ALAN",
-        "WASIK_PIOTR"
-      ],
-      "paths": [
-        "JEDRZEJCZAK_ALAN/Alan_Jedrzejczak_09_09_2026/expenses/models.py",
-        "WASIK_PIOTR/09_09_2026/app/models.py"
-      ],
-      "jaccard": 0.2653,
-      "text": 0.7536,
-      "struct": 0.7817,
-      "chars": 1362
-    },
-    {
-      "pupils": [
-        "PICZKOWSKI_OSKAR",
-        "WASIK_PIOTR"
-      ],
-      "paths": [
-        "PICZKOWSKI_OSKAR/09_09_2026/app/main.py",
-        "WASIK_PIOTR/09_09_2026/app/main.py"
-      ],
-      "jaccard": 0.2618,
-      "text": 0.7327,
-      "struct": 0.6987,
-      "chars": 2230
-    },
-    {
-      "pupils": [
-        "SOBALA_JAKUB",
-        "WASIK_PIOTR"
-      ],
-      "paths": [
-        "SOBALA_JAKUB/09_09_2026/models.py",
-        "WASIK_PIOTR/09_09_2026/app/models.py"
-      ],
-      "jaccard": 0.2556,
-      "text": 0.8263,
-      "struct": 0.5399,
-      "chars": 1369
-    },
-    {
-      "pupils": [
-        "POTAKOWSKI_JAKUB",
-        "SOBALA_JAKUB"
-      ],
-      "paths": [
-        "POTAKOWSKI_JAKUB/09_09_2026/models.py",
-        "SOBALA_JAKUB/09_09_2026/models.py"
-      ],
-      "jaccard": 0.2476,
-      "text": 0.7109,
-      "struct": 0.7266,
-      "chars": 1492
     }
   ]
 }
