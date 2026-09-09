@@ -1,9 +1,9 @@
 {
-  "generated": "7de1c9b6cd655c7819dd617c57065ef4aeac42fc",
+  "generated": "416dd9a39df9f7a0265af08601c05eaf29f52ff2",
   "minChars": 100,
   "threshold": 0.6,
-  "fileCount": 0,
-  "pupilCount": 0,
+  "fileCount": 5,
+  "pupilCount": 1,
   "skipped": [],
   "flagged": [],
   "notices": []
