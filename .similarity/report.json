@@ -1,10 +1,151 @@
 {
-  "generated": "416dd9a39df9f7a0265af08601c05eaf29f52ff2",
+  "generated": "850af6cadd67bd9be2afc668255aa5db25f44acb",
   "minChars": 100,
   "threshold": 0.6,
-  "fileCount": 5,
-  "pupilCount": 1,
+  "fileCount": 8,
+  "pupilCount": 2,
   "skipped": [],
   "flagged": [],
-  "notices": []
+  "notices": [
+    {
+      "pupils": [
+        "SOBALA_JAKUB",
+        "ZAWADA_HUBERT"
+      ],
+      "paths": [
+        "SOBALA_JAKUB/09_09_2026/main.py",
+        "ZAWADA_HUBERT/09.09/main.py"
+      ],
+      "jaccard": 0.0883,
+      "text": 0.4227,
+      "struct": 0.4374,
+      "chars": 1873
+    },
+    {
+      "pupils": [
+        "SOBALA_JAKUB",
+        "ZAWADA_HUBERT"
+      ],
+      "paths": [
+        "SOBALA_JAKUB/09_09_2026/main.py",
+        "ZAWADA_HUBERT/09.09/services.py"
+      ],
+      "jaccard": 0.0767,
+      "text": 0.4176,
+      "struct": 0.3689,
+      "chars": 1873
+    },
+    {
+      "pupils": [
+        "SOBALA_JAKUB",
+        "ZAWADA_HUBERT"
+      ],
+      "paths": [
+        "SOBALA_JAKUB/09_09_2026/service.py",
+        "ZAWADA_HUBERT/09.09/tests.py"
+      ],
+      "jaccard": 0.0665,
+      "text": 0.2299,
+      "struct": 0.2165,
+      "chars": 6202
+    },
+    {
+      "pupils": [
+        "SOBALA_JAKUB",
+        "ZAWADA_HUBERT"
+      ],
+      "paths": [
+        "SOBALA_JAKUB/09_09_2026/models.py",
+        "ZAWADA_HUBERT/09.09/main.py"
+      ],
+      "jaccard": 0.0647,
+      "text": 0.333,
+      "struct": 0.3536,
+      "chars": 1492
+    },
+    {
+      "pupils": [
+        "SOBALA_JAKUB",
+        "ZAWADA_HUBERT"
+      ],
+      "paths": [
+        "SOBALA_JAKUB/09_09_2026/models.py",
+        "ZAWADA_HUBERT/09.09/services.py"
+      ],
+      "jaccard": 0.0639,
+      "text": 0.3452,
+      "struct": 0.3655,
+      "chars": 1492
+    },
+    {
+      "pupils": [
+        "SOBALA_JAKUB",
+        "ZAWADA_HUBERT"
+      ],
+      "paths": [
+        "SOBALA_JAKUB/09_09_2026/main.py",
+        "ZAWADA_HUBERT/09.09/tests.py"
+      ],
+      "jaccard": 0.0626,
+      "text": 0.342,
+      "struct": 0.2841,
+      "chars": 1873
+    },
+    {
+      "pupils": [
+        "SOBALA_JAKUB",
+        "ZAWADA_HUBERT"
+      ],
+      "paths": [
+        "SOBALA_JAKUB/09_09_2026/models.py",
+        "ZAWADA_HUBERT/09.09/tests.py"
+      ],
+      "jaccard": 0.0519,
+      "text": 0.2745,
+      "struct": 0.2936,
+      "chars": 1492
+    },
+    {
+      "pupils": [
+        "SOBALA_JAKUB",
+        "ZAWADA_HUBERT"
+      ],
+      "paths": [
+        "SOBALA_JAKUB/09_09_2026/test_main.py",
+        "ZAWADA_HUBERT/09.09/tests.py"
+      ],
+      "jaccard": 0.0517,
+      "text": 0.26,
+      "struct": 0.2759,
+      "chars": 3699
+    },
+    {
+      "pupils": [
+        "SOBALA_JAKUB",
+        "ZAWADA_HUBERT"
+      ],
+      "paths": [
+        "SOBALA_JAKUB/09_09_2026/service.py",
+        "ZAWADA_HUBERT/09.09/main.py"
+      ],
+      "jaccard": 0.0365,
+      "text": 0.2308,
+      "struct": 0.3542,
+      "chars": 4898
+    },
+    {
+      "pupils": [
+        "SOBALA_JAKUB",
+        "ZAWADA_HUBERT"
+      ],
+      "paths": [
+        "SOBALA_JAKUB/09_09_2026/service.py",
+        "ZAWADA_HUBERT/09.09/services.py"
+      ],
+      "jaccard": 0.03,
+      "text": 0.2334,
+      "struct": 0.2381,
+      "chars": 4626
+    }
+  ]
 }
