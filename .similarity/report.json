@@ -1,5 +1,5 @@
 {
-  "generated": "a0a59ffbcc5aa0ff81b2435343330a3cf132dd24",
+  "generated": "4fe25f22f89c11f0cfc552027aec48e30a13bcff",
   "minChars": 100,
   "threshold": 0.6,
   "fileCount": 54,
@@ -142,20 +142,6 @@
     },
     {
       "pupils": [
-        "SOBALA_JAKUB",
-        "WOJCIESZEK_ADAM"
-      ],
-      "paths": [
-        "SOBALA_JAKUB/09_09_2026/test_main.py",
-        "WOJCIESZEK_ADAM/09_09_2026/tests.py"
-      ],
-      "jaccard": 0.2891,
-      "text": 0.8147,
-      "struct": 0.7262,
-      "chars": 3668
-    },
-    {
-      "pupils": [
         "WASIK_PIOTR",
         "ZARYCHTA_HUBERT"
       ],
@@ -167,6 +153,20 @@
       "text": 0.8825,
       "struct": 0.8756,
       "chars": 1287
+    },
+    {
+      "pupils": [
+        "WASIK_PIOTR",
+        "ZARYCHTA_HUBERT"
+      ],
+      "paths": [
+        "WASIK_PIOTR/09_09_2026/app/main.py",
+        "ZARYCHTA_HUBERT/HUBERT_ZARYCHTA/09_09_2026/expenses/main.py"
+      ],
+      "jaccard": 0.2704,
+      "text": 0.8024,
+      "struct": 0.7604,
+      "chars": 2230
     }
   ]
 }
