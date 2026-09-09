@@ -3,14 +3,8 @@ from typing import Dict, List, Optional
 from fastapi import FastAPI, HTTPException, Query, status
 from pydantic import BaseModel, Field, field_validator
 
-# ==========================================
-# CONSTANTS & ENUMS
-# ==========================================
 VALID_CATEGORIES = {"Food", "Transport", "Entertainment", "Utilities", "Other"}
 
-# ==========================================
-# a) PYDANTIC MODELS
-# ==========================================
 class ExpenseBase(BaseModel):
     amount: float = Field(..., gt=0, description="Amount must be greater than 0")
     category: str = Field(..., description="Category must be from the allowed set")
@@ -60,10 +54,6 @@ class ExpenseUpdate(BaseModel):
 class ExpensePublic(ExpenseBase):
     id: int
 
-
-# ==========================================
-# d) SERVICE LAYER (NO FASTAPI IMPORTS)
-# ==========================================
 class ExpenseService:
     def __init__(self):
         self._storage: Dict[int, dict] = {}
@@ -92,10 +82,8 @@ class ExpenseService:
     ) -> List[ExpensePublic]:
         results = []
         for data in self._storage.values():
-            # Apply category filter
             if category and data["category"] != category:
                 continue
-            # Apply date range filters
             if date_from and data["spent_on"] < date_from:
                 continue
             if date_to and data["spent_on"] > date_to:
@@ -133,19 +121,16 @@ class ExpenseService:
         for e in matched_expenses:
             total_per_category[e.category] = total_per_category.get(e.category, 0.0) + e.amount
 
-        # Calculate average per day over the requested range
         if date_from and date_to:
-            # Inclusive day count
             days = (date_to - date_from).days + 1
         elif matched_expenses:
-            # Fallback range: min date to max date present in the filtered result set
             min_date = min(e.spent_on for e in matched_expenses)
             max_date = max(e.spent_on for e in matched_expenses)
             days = (max_date - min_date).days + 1
         else:
             days = 1
 
-        days = max(days, 1) # Prevent division by zero
+        days = max(days, 1)
         average_per_day = total / days
 
         return {
@@ -155,13 +140,8 @@ class ExpenseService:
             "days_counted": days
         }
 
-
-# Global service instance for in-memory storage
 expense_service = ExpenseService()
 
-# ==========================================
-# b) & c) FASTAPI ROUTING
-# ==========================================
 app = FastAPI(title="Expense Service API")
 
 
