@@ -1,10 +1,15 @@
 {
-  "generated": "ef20173ea5180ae2f6950113b028f5a1d81e4a5c",
+  "generated": "35cc0de7a3f9f99e6b78621b7cf0257e7405cd52",
   "minChars": 100,
   "threshold": 0.6,
-  "fileCount": 51,
-  "pupilCount": 13,
+  "fileCount": 69,
+  "pupilCount": 14,
   "skipped": [
+    {
+      "path": "GROMADZKI_MARCIN/16_09_2026/ex2.py",
+      "pupil": "GROMADZKI_MARCIN",
+      "chars": 0
+    },
     {
       "path": "PICZKOWSKI_OSKAR/09_09_2026/tests/__init__.py",
       "pupil": "PICZKOWSKI_OSKAR",
@@ -100,6 +105,20 @@
     },
     {
       "pupils": [
+        "PICZKOWSKI_OSKAR",
+        "WASIK_PIOTR"
+      ],
+      "paths": [
+        "PICZKOWSKI_OSKAR/16_09_2026/Exercise_1.py",
+        "WASIK_PIOTR/16_09_2026/exercise_1.py"
+      ],
+      "jaccard": 0.3718,
+      "text": 0.7974,
+      "struct": 0.8268,
+      "chars": 1689
+    },
+    {
+      "pupils": [
         "GASIOROWSKI_MICHAL",
         "WASIK_PIOTR"
       ],
@@ -153,20 +172,6 @@
       "text": 0.8825,
       "struct": 0.8756,
       "chars": 1287
-    },
-    {
-      "pupils": [
-        "WASIK_PIOTR",
-        "ZARYCHTA_HUBERT"
-      ],
-      "paths": [
-        "WASIK_PIOTR/09_09_2026/app/main.py",
-        "ZARYCHTA_HUBERT/09_09_2026/expenses/main.py"
-      ],
-      "jaccard": 0.2704,
-      "text": 0.8024,
-      "struct": 0.7604,
-      "chars": 2230
     }
   ]
 }
