@@ -1,8 +1,8 @@
 {
-  "generated": "f23c8862d0909cf2dae65e6f89edf9c919686ae4",
+  "generated": "63a9ec26b3ec4868d224c36d62f0df61d379e848",
   "minChars": 100,
   "threshold": 0.6,
-  "fileCount": 90,
+  "fileCount": 93,
   "pupilCount": 14,
   "skipped": [
     {
@@ -161,17 +161,17 @@
     },
     {
       "pupils": [
-        "WASIK_PIOTR",
-        "ZARYCHTA_HUBERT"
+        "GROMADZKI_MARCIN",
+        "WASIK_PIOTR"
       ],
       "paths": [
-        "WASIK_PIOTR/09_09_2026/app/models.py",
-        "ZARYCHTA_HUBERT/09_09_2026/expenses/models.py"
+        "GROMADZKI_MARCIN/16_09_2026/ex6.py",
+        "WASIK_PIOTR/16_09_2026/exercise_6.py"
       ],
-      "jaccard": 0.2782,
-      "text": 0.8825,
-      "struct": 0.8756,
-      "chars": 1287
+      "jaccard": 0.2859,
+      "text": 0.8534,
+      "struct": 0.8874,
+      "chars": 910
     }
   ]
 }
