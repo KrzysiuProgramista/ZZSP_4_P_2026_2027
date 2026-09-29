@@ -1,9 +1,9 @@
 {
-  "generated": "63a9ec26b3ec4868d224c36d62f0df61d379e848",
+  "generated": "91a0bd860b041678ae1166853c785ff5fcf7d37a",
   "minChars": 100,
   "threshold": 0.6,
-  "fileCount": 93,
-  "pupilCount": 14,
+  "fileCount": 111,
+  "pupilCount": 15,
   "skipped": [
     {
       "path": "GROMADZKI_MARCIN/16_09_2026/ex2.py",
@@ -46,6 +46,20 @@
       "text": 0.8547,
       "struct": 0.8591,
       "chars": 3833
+    },
+    {
+      "pupils": [
+        "SZUBERT_JAKUB",
+        "WOJCIESZEK_ADAM"
+      ],
+      "paths": [
+        "SZUBERT_JAKUB/16_09_2026/ex6.py",
+        "WOJCIESZEK_ADAM/16_09_2026/ex6.py"
+      ],
+      "jaccard": 0.5086,
+      "text": 0.8991,
+      "struct": 0.8909,
+      "chars": 579
     },
     {
       "pupils": [
@@ -158,20 +172,6 @@
       "text": 0.5302,
       "struct": 0.7293,
       "chars": 3987
-    },
-    {
-      "pupils": [
-        "GROMADZKI_MARCIN",
-        "WASIK_PIOTR"
-      ],
-      "paths": [
-        "GROMADZKI_MARCIN/16_09_2026/ex6.py",
-        "WASIK_PIOTR/16_09_2026/exercise_6.py"
-      ],
-      "jaccard": 0.2859,
-      "text": 0.8534,
-      "struct": 0.8874,
-      "chars": 910
     }
   ]
 }
