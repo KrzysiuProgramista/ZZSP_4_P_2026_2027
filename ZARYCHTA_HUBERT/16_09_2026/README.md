@@ -1,77 +1,107 @@
-# Python decorators
+# Ćwiczenia 2–6: dekoratory w Pythonie
 
-**Author:** Hubert Zarychta  
-**Date:** 16 September 2026
-
-## Exercise 0: Notes
-
-These notes summarise [Primer on Python Decorators — Real Python](https://realpython.com/primer-on-python-decorators/) in my own words.
-
-A function decorator accepts a function and returns a callable, usually a wrapper. The wrapper can add behaviour before or after calling the original function, without editing its body.
-
-Python functions are objects. We can pass them as arguments, return them from other functions, and define functions inside functions. A wrapper can remember the original function through a closure.
-
-The syntax:
-
-```python
-@logged
-def add(a, b):
-    return a + b
-```
-
-is equivalent to defining `add` normally and then writing:
-
-```python
-add = logged(add)
-```
-
-The decorator runs when the function is defined. The returned wrapper runs whenever the decorated function is called.
-
-In a reusable wrapper, `*args` collects positional arguments and `**kwargs` collects keyword arguments. Passing both to the original function preserves its inputs. Returning its result preserves its output.
-
-Decorators can handle logging, timing, counting calls, caching, or checking access. They help reuse the same behaviour across several functions.
-
-## Why use functools.wraps?
-
-Use `@functools.wraps(func)` above the wrapper. It copies metadata such as `__name__` and `__doc__` and sets `__wrapped__` to the original function. See the [Python functools documentation](https://docs.python.org/3/library/functools.html#functools.wraps).
-
-By default, `inspect.signature()` follows `__wrapped__`, so it can show the original parameters. `wraps` does not change the wrapper's actual `*args, **kwargs` parameters. See the [Python inspect documentation](https://docs.python.org/3/library/inspect.html#inspect.signature).
-
-For the `add` function in this solution:
-
-| Inspected value | With wraps | Without wraps |
-| --- | --- | --- |
-| `add.__name__` | `add` | `wrapper` |
-| `add.__doc__` | `Return a plus b.` | `None` |
-| `inspect.signature(add)` | `(a, b)` | `(*args, **kwargs)` |
-
-The version without `wraps` exists only to demonstrate the difference.
-
-## Exercise 1: Implementation
-
-All code is in `exercise_1.py`:
-
-- `logged` prints the function name and returned value; it decorates `add`, `multiply`, and `greet`.
-- `timer` prints elapsed seconds, including when the function raises an exception.
-- `count_calls` exposes a separate `.calls` counter for each decorated function. It starts at zero and counts every call, including failed calls.
-- The demonstration prints `add.__name__`, `add.__doc__`, and its inspected signature with and without `wraps`.
-
-Timing uses differences between two `time.perf_counter()` readings, as described in the [Python time documentation](https://docs.python.org/3/library/time.html#time.perf_counter).
-
-The supplied starter code needs `wrapper(*args, **kwargs)`, `func(*args, **kwargs)`, and `func.__name__`.
-
-## Run
-
-From the repository root on Windows:
+Gotowe przykłady wymagają **Pythona 3.10+** i korzystają wyłącznie z biblioteki
+standardowej. Otwórz terminal w folderze `16_09_2026` i uruchom:
 
 ```powershell
-py Zarychta_Hubert/16_09_2026/exercise_1.py
+python run_exercises.py
+python -m unittest test_ex2 -v
 ```
 
-On Linux or macOS:
+Każde ćwiczenie można też uruchomić osobno, np. `python ex3.py`.
+Importowanie modułów nie uruchamia demonstracji. Demonstracja `retry` oraz
+wszystkie jej testy zastępują `sleep` atrapą, więc nie czekają na opóźnienia.
 
-```bash
-python3 Zarychta_Hubert/16_09_2026/exercise_1.py
+| Plik | Zawartość |
+| --- | --- |
+| `ex2.py` | Ponawianie wywołań, narastające opóźnienia i logowanie |
+| `ex3.py` | Własne `memoize`, Fibonacci i `lru_cache` |
+| `ex4.py` | Walidacja typów i wartości oraz ostrzeżenia |
+| `ex5.py` | Dekorowanie metod i klas, porównanie z metaklasą |
+| `ex6.py` | Kolejność działania kilku dekoratorów |
+| `test_ex2.py` | Dokładnie sześć testów `retry` |
+| `run_exercises.py` | Uruchomienie wszystkich demonstracji |
+
+## Ćwiczenie 2 — dekorator z argumentami
+
+```python
+@retry(times=5, delay=0.5, exceptions=(ValueError,), backoff=2)
+def unstable():
+    ...
 ```
 
-Only the Python standard library is used. No additional packages are needed. Timing values vary between runs.
+- `times` oznacza łączną liczbę prób, razem z pierwszym wywołaniem.
+- Opóźnienie rośnie według `delay * backoff ** retry_index`: 0.5, 1, 2, 4 s.
+  `backoff=1` daje stałe opóźnienie.
+- Domyślnie ponawiany jest tylko `ValueError` i jego podklasy. Parametr
+  `exceptions` pozwala wskazać inną krotkę klas wyjątków.
+- Każde faktyczne ponowienie zapisuje w logu numer próby, błąd i opóźnienie.
+  Po ostatniej porażce wyjątek jest zgłaszany dalej bez dodatkowego czekania.
+- `functools.wraps` zachowuje nazwę i dokumentację oryginalnej funkcji.
+
+Demonstracja kończy się wynikiem `"success"` po dwóch porażkach. Atrapa `sleep`
+rejestruje opóźnienia `[0.5, 1.0]`. Sześć testów sprawdza natychmiastowy sukces,
+sukces po błędach wraz z backoffem i logowaniem, wyczerpanie prób, wskazane
+wyjątki i ich podklasy, inne wyjątki oraz przekazywanie argumentów i stały backoff.
+
+## Ćwiczenie 3 — zapamiętywanie wyników
+
+`ex3.py` porównuje `fib_naive(35)`, `fib_memoized(35)` i `fib(35)` z dekoratorem
+`@lru_cache(maxsize=128)`. Wszystkie zwracają **9 227 465**. Mierzone są pierwsze
+wywołanie z pustym cache i kolejne wywołanie; czasy zależą od komputera.
+
+Własny `@memoize` przechowuje wyniki w słowniku. Klucz zawiera argumenty pozycyjne
+i posortowane argumenty nazwane. Listy i słowniki nie mogą być kluczami:
+wywołania z takimi argumentami działają, lecz pomijają cache. Przykład pokazuje
+dwa wykonania dla dwóch list oraz jedno wykonanie dla dwóch takich samych krotek.
+
+Rekurencja przechodzi przez udekorowane funkcje, więc wyniki pośrednie również
+są zapamiętywane. Własny cache jest nieograniczony; `lru_cache` ogranicza liczbę
+wpisów, udostępnia statystyki i także wymaga argumentów hashowalnych.
+
+```text
+fib.cache_info(): CacheInfo(hits=34, misses=36, maxsize=128, currsize=36)
+```
+
+Statystyka uwzględnia drugie wywołanie `fib(35)`. Cache stosuj do funkcji, których
+wynik pozostaje poprawny przy ponownym użyciu tych samych argumentów.
+
+## Ćwiczenie 4 — walidacja
+
+- `@validate_types` korzysta z `inspect.signature` i `typing.get_type_hints`.
+  Sprawdza argumenty pozycyjne, nazwane, domyślne i zmienną liczbę argumentów.
+  Obsługuje zwykłe typy, unie i popularne kontenery, także zagnieżdżone.
+  Niezgodność powoduje `TypeError`; typ wyniku nie jest sprawdzany.
+- `@require_positive("amount")` odnajduje argument po nazwie, również przy
+  przekazaniu pozycyjnym lub użyciu wartości domyślnej. Zero i wartości ujemne
+  powodują `ValueError`, a nieodpowiednie typy — `TypeError`.
+- `@deprecated("use new_function instead")` emituje `DeprecationWarning`.
+  `stacklevel=2` wskazuje miejsce wywołania. Demonstracja przechwytuje ostrzeżenie,
+  ponieważ ta kategoria bywa domyślnie ukryta.
+
+## Ćwiczenie 5 — metody i klasy
+
+`@timer` przekazuje `*args, **kwargs`, w tym `self` jako pierwszy argument metody.
+`@time_all_methods` dekoruje metody zdefiniowane bezpośrednio w klasie:
+zwykłe, statyczne, klasowe oraz `__init__`. Zachowuje ich sposób wiązania.
+Przykład dotyczy metod synchronicznych; nie zmienia metod odziedziczonych ani
+akcesorów `property`.
+
+`TimedMeta` robi to samo podczas tworzenia klasy. Komentarz w kodzie wyjaśnia,
+dlaczego dekorator klasy jest tu czytelniejszy. Metaklasa automatycznie obejmuje
+nowe metody podklas; dekorator trzeba nałożyć na podklasę ponownie.
+
+## Ćwiczenie 6 — nakładanie dekoratorów
+
+`ex6.py` importuje `timer` z `ex5.py`. Dekoratory nakłada się od dołu:
+`@logged` nad `@timer` odpowiada `logged(timer(funkcja))`.
+
+```text
+@logged nad @timer: logged enter -> timer enter -> body -> timer exit -> logged exit
+@timer nad @logged: timer enter -> logged enter -> body -> logged exit -> timer exit
+```
+
+Zewnętrzny dekorator rozpoczyna działanie pierwszy i kończy ostatni.
+Demonstracja wypisuje przewidywaną i rzeczywistą kolejność. Gdy `timer` jest
+zewnętrzny, czas obejmuje również oba komunikaty `logged`. Dwa przykładowe
+wywołania korzystają z krótkich, rzeczywistych opóźnień po 0.01 s.
