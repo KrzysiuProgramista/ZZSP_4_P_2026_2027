@@ -1,13 +1,18 @@
 {
-  "generated": "7cc09a37c82b43917a749df64b5ca94c353a38f5",
+  "generated": "5a0189af11d1826a530f4137d9407fcfd89a5302",
   "minChars": 100,
   "threshold": 0.6,
-  "fileCount": 159,
+  "fileCount": 173,
   "pupilCount": 16,
   "skipped": [
     {
       "path": "GROMADZKI_MARCIN/16_09_2026/ex2.py",
       "pupil": "GROMADZKI_MARCIN",
+      "chars": 0
+    },
+    {
+      "path": "JEDRZEJCZAK_ALAN/21_10_2026/plugin_loader_homework/tests/__init__.py",
+      "pupil": "JEDRZEJCZAK_ALAN",
       "chars": 0
     },
     {
