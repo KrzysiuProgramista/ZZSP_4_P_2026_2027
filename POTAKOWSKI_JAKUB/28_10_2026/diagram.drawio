@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-10-28T15:30:00.000Z" agent="ChatGPT" version="25.0.3" type="device">
+  <diagram id="database-erd" name="ERD - sklep">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="customers" value="&lt;b&gt;customers&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; customer_id : INTEGER&lt;br&gt;name : TEXT NOT NULL&lt;br&gt;email : TEXT NOT NULL UNIQUE" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;align=left;verticalAlign=top;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="100" width="250" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="categories" value="&lt;b&gt;categories&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; category_id : INTEGER&lt;br&gt;name : TEXT NOT NULL UNIQUE" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;align=left;verticalAlign=top;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="390" width="250" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="products" value="&lt;b&gt;products&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; product_id : INTEGER&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; category_id : INTEGER NOT NULL&lt;br&gt;name : TEXT NOT NULL&lt;br&gt;product_code : TEXT NOT NULL UNIQUE&lt;br&gt;price : REAL NOT NULL, CHECK (&gt; 0)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;align=left;verticalAlign=top;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="390" y="360" width="300" height="155" as="geometry"/>
+        </mxCell>
+        <mxCell id="orders" value="&lt;b&gt;orders&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; order_id : INTEGER&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; customer_id : INTEGER NOT NULL&lt;br&gt;order_date : TEXT NOT NULL, DEFAULT now&lt;br&gt;status : TEXT NOT NULL, DEFAULT 'pending'&lt;br&gt;CHECK status IN (pending, paid, shipped, delivered, cancelled)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;align=left;verticalAlign=top;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="390" y="90" width="330" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="order_items" value="&lt;b&gt;order_items&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK, FK&lt;/b&gt; order_id : INTEGER&lt;br&gt;&lt;b&gt;PK, FK&lt;/b&gt; product_id : INTEGER&lt;br&gt;quantity : INTEGER NOT NULL, CHECK (&gt; 0)&lt;br&gt;unit_price : REAL NOT NULL, CHECK (&gt; 0)&lt;br&gt;&lt;i&gt;PK złożony: (order_id, product_id)&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;align=left;verticalAlign=top;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="800" y="245" width="320" height="145" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_customer_orders" value="1 : N&lt;br&gt;ON DELETE RESTRICT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=ERoneToMany;endFill=0;startArrow=ERone;startFill=0;strokeColor=#6c8ebf;fontSize=11;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="customers" target="orders">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="340" y="165"/><mxPoint x="340" y="175"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_categories_products" value="1 : N&lt;br&gt;ON DELETE RESTRICT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=ERoneToMany;endFill=0;startArrow=ERone;startFill=0;strokeColor=#82b366;fontSize=11;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="categories" target="products">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="340" y="440"/><mxPoint x="340" y="440"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_orders_items" value="1 : N&lt;br&gt;ON DELETE CASCADE" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=ERoneToMany;endFill=0;startArrow=ERone;startFill=0;strokeColor=#d79b00;fontSize=11;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="orders" target="order_items">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="760" y="175"/><mxPoint x="760" y="300"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_products_items" value="1 : N&lt;br&gt;ON DELETE RESTRICT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=ERoneToMany;endFill=0;startArrow=ERone;startFill=0;strokeColor=#82b366;fontSize=11;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="products" target="order_items">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="740" y="440"/><mxPoint x="950" y="440"/></Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
