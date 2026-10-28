@@ -1,8 +1,8 @@
 {
-  "generated": "5a0189af11d1826a530f4137d9407fcfd89a5302",
+  "generated": "69949f9a55c205f440ccf32d4462f753781f947f",
   "minChars": 100,
   "threshold": 0.6,
-  "fileCount": 173,
+  "fileCount": 181,
   "pupilCount": 16,
   "skipped": [
     {
@@ -19,6 +19,16 @@
       "path": "PICZKOWSKI_OSKAR/09_09_2026/tests/__init__.py",
       "pupil": "PICZKOWSKI_OSKAR",
       "chars": 0
+    },
+    {
+      "path": "PICZKOWSKI_OSKAR/28_10_2026/plugins/__init__.py",
+      "pupil": "PICZKOWSKI_OSKAR",
+      "chars": 3
+    },
+    {
+      "path": "PICZKOWSKI_OSKAR/28_10_2026/tests/__init__.py",
+      "pupil": "PICZKOWSKI_OSKAR",
+      "chars": 3
     },
     {
       "path": "WASIK_PIOTR/09_09_2026/app/__init__.py",
