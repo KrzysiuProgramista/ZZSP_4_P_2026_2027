@@ -1,0 +1,1953 @@
+[
+  {
+    "query": "-- Exercises 2-6, slides 27-35. Prices/spend are in PLN.\n-- Historical order value includes all statuses. Revenue/spend includes only paid\n-- and shipped orders. Customers without qualifying orders have zero spend.\n-- BETWEEN includes both endpoints. product_id resolves price ties.\n-- 2.1\nSELECT product_id,name,price FROM products WHERE category_id=1 ORDER BY price,product_id;",
+    "columns": [
+      "product_id",
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        1,
+        "Product 1",
+        10
+      ],
+      [
+        2,
+        "Product 2",
+        10
+      ],
+      [
+        3,
+        "Product 3",
+        25
+      ],
+      [
+        4,
+        "Product 4",
+        100
+      ],
+      [
+        5,
+        "Product 5",
+        300
+      ]
+    ]
+  },
+  {
+    "query": "-- 2.2\nSELECT product_id,name,price FROM products WHERE price BETWEEN 10 AND 100 ORDER BY price,product_id;",
+    "columns": [
+      "product_id",
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        1,
+        "Product 1",
+        10
+      ],
+      [
+        2,
+        "Product 2",
+        10
+      ],
+      [
+        13,
+        "Product 13",
+        20
+      ],
+      [
+        3,
+        "Product 3",
+        25
+      ],
+      [
+        17,
+        "Product 17",
+        30
+      ],
+      [
+        8,
+        "Product 8",
+        45
+      ],
+      [
+        14,
+        "Product 14",
+        60
+      ],
+      [
+        18,
+        "Product 18",
+        75
+      ],
+      [
+        9,
+        "Product 9",
+        90
+      ],
+      [
+        4,
+        "Product 4",
+        100
+      ]
+    ]
+  },
+  {
+    "query": "-- 2.3\nSELECT customer_id,name,email FROM customers WHERE email LIKE '%@example.com' ORDER BY customer_id;",
+    "columns": [
+      "customer_id",
+      "name",
+      "email"
+    ],
+    "rows": [
+      [
+        1,
+        "Customer 1",
+        "customer1@example.com"
+      ],
+      [
+        3,
+        "Customer 3",
+        "customer3@example.com"
+      ],
+      [
+        5,
+        "Customer 5",
+        "customer5@example.com"
+      ],
+      [
+        7,
+        "Customer 7",
+        "customer7@example.com"
+      ],
+      [
+        9,
+        "Customer 9",
+        "customer9@example.com"
+      ]
+    ]
+  },
+  {
+    "query": "-- 2.4\nSELECT product_id,name,price FROM products ORDER BY price DESC,product_id LIMIT 5;",
+    "columns": [
+      "product_id",
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        7,
+        "Product 7",
+        1000
+      ],
+      [
+        6,
+        "Product 6",
+        500
+      ],
+      [
+        20,
+        "Product 20",
+        400
+      ],
+      [
+        12,
+        "Product 12",
+        350
+      ],
+      [
+        5,
+        "Product 5",
+        300
+      ]
+    ]
+  },
+  {
+    "query": "-- 2.5\nSELECT DISTINCT status FROM orders ORDER BY status;",
+    "columns": [
+      "status"
+    ],
+    "rows": [
+      [
+        "cancelled"
+      ],
+      [
+        "paid"
+      ],
+      [
+        "pending"
+      ],
+      [
+        "shipped"
+      ]
+    ]
+  },
+  {
+    "query": "-- 3.1-2: LEFT JOIN also retains empty categories.\nSELECT c.category_id,c.name,COUNT(p.product_id) AS product_count,\n AVG(p.price) AS average_price,MIN(p.price) AS minimum_price,MAX(p.price) AS maximum_price\nFROM categories c LEFT JOIN products p USING(category_id) GROUP BY c.category_id,c.name;",
+    "columns": [
+      "category_id",
+      "name",
+      "product_count",
+      "average_price",
+      "minimum_price",
+      "maximum_price"
+    ],
+    "rows": [
+      [
+        1,
+        "Electronics",
+        5,
+        89.0,
+        10,
+        300
+      ],
+      [
+        2,
+        "Office",
+        4,
+        408.75,
+        45,
+        1000
+      ],
+      [
+        3,
+        "Home",
+        3,
+        240.0,
+        150,
+        350
+      ],
+      [
+        4,
+        "Sports",
+        3,
+        66.66666666666667,
+        20,
+        120
+      ],
+      [
+        5,
+        "Books",
+        3,
+        101.66666666666667,
+        30,
+        200
+      ],
+      [
+        6,
+        "Garden",
+        2,
+        290.0,
+        180,
+        400
+      ]
+    ]
+  },
+  {
+    "query": "-- 3.3\nSELECT category_id,COUNT(*) AS product_count FROM products GROUP BY category_id HAVING COUNT(*)>3;",
+    "columns": [
+      "category_id",
+      "product_count"
+    ],
+    "rows": [
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        4
+      ]
+    ]
+  },
+  {
+    "query": "-- 3.4\nSELECT o.order_id,COALESCE(SUM(i.quantity*i.unit_price),0) AS order_value\nFROM orders o LEFT JOIN order_items i USING(order_id) GROUP BY o.order_id ORDER BY o.order_id;",
+    "columns": [
+      "order_id",
+      "order_value"
+    ],
+    "rows": [
+      [
+        1,
+        105
+      ],
+      [
+        2,
+        2200
+      ],
+      [
+        3,
+        1360
+      ],
+      [
+        4,
+        1640
+      ],
+      [
+        5,
+        500
+      ],
+      [
+        6,
+        485
+      ],
+      [
+        7,
+        105
+      ],
+      [
+        8,
+        2200
+      ],
+      [
+        9,
+        1360
+      ],
+      [
+        10,
+        1640
+      ],
+      [
+        11,
+        140
+      ],
+      [
+        12,
+        260
+      ],
+      [
+        13,
+        30
+      ],
+      [
+        14,
+        700
+      ],
+      [
+        15,
+        1090
+      ],
+      [
+        16,
+        590
+      ],
+      [
+        17,
+        140
+      ],
+      [
+        18,
+        260
+      ],
+      [
+        19,
+        30
+      ],
+      [
+        20,
+        700
+      ],
+      [
+        21,
+        1090
+      ],
+      [
+        22,
+        590
+      ],
+      [
+        23,
+        140
+      ],
+      [
+        24,
+        260
+      ],
+      [
+        25,
+        30
+      ]
+    ]
+  },
+  {
+    "query": "-- WHERE selects individual rows before grouping; HAVING selects completed groups.\nSELECT category_id,AVG(price) AS average_price FROM products\nWHERE price>10 GROUP BY category_id HAVING COUNT(*)>3;",
+    "columns": [
+      "category_id",
+      "average_price"
+    ],
+    "rows": [
+      [
+        2,
+        408.75
+      ]
+    ]
+  },
+  {
+    "query": "-- 4.1: one row per order.\nSELECT o.order_id,o.order_date,o.status,c.name AS customer_name FROM orders o JOIN customers c USING(customer_id);",
+    "columns": [
+      "order_id",
+      "order_date",
+      "status",
+      "customer_name"
+    ],
+    "rows": [
+      [
+        1,
+        "2026-10-01",
+        "pending",
+        "Customer 1"
+      ],
+      [
+        2,
+        "2026-10-01",
+        "paid",
+        "Customer 2"
+      ],
+      [
+        3,
+        "2026-10-02",
+        "shipped",
+        "Customer 3"
+      ],
+      [
+        4,
+        "2026-10-02",
+        "cancelled",
+        "Customer 4"
+      ],
+      [
+        5,
+        "2026-10-03",
+        "pending",
+        "Customer 5"
+      ],
+      [
+        6,
+        "2026-10-03",
+        "paid",
+        "Customer 6"
+      ],
+      [
+        7,
+        "2026-10-04",
+        "shipped",
+        "Customer 7"
+      ],
+      [
+        8,
+        "2026-10-04",
+        "cancelled",
+        "Customer 8"
+      ],
+      [
+        9,
+        "2026-10-05",
+        "pending",
+        "Customer 1"
+      ],
+      [
+        10,
+        "2026-10-05",
+        "paid",
+        "Customer 2"
+      ],
+      [
+        11,
+        "2026-10-06",
+        "shipped",
+        "Customer 3"
+      ],
+      [
+        12,
+        "2026-10-06",
+        "cancelled",
+        "Customer 4"
+      ],
+      [
+        13,
+        "2026-10-07",
+        "pending",
+        "Customer 5"
+      ],
+      [
+        14,
+        "2026-10-07",
+        "paid",
+        "Customer 6"
+      ],
+      [
+        15,
+        "2026-10-08",
+        "shipped",
+        "Customer 7"
+      ],
+      [
+        16,
+        "2026-10-08",
+        "cancelled",
+        "Customer 8"
+      ],
+      [
+        17,
+        "2026-10-09",
+        "pending",
+        "Customer 1"
+      ],
+      [
+        18,
+        "2026-10-09",
+        "paid",
+        "Customer 2"
+      ],
+      [
+        19,
+        "2026-10-10",
+        "shipped",
+        "Customer 3"
+      ],
+      [
+        20,
+        "2026-10-10",
+        "cancelled",
+        "Customer 4"
+      ],
+      [
+        21,
+        "2026-10-11",
+        "pending",
+        "Customer 5"
+      ],
+      [
+        22,
+        "2026-10-11",
+        "paid",
+        "Customer 6"
+      ],
+      [
+        23,
+        "2026-10-12",
+        "shipped",
+        "Customer 7"
+      ],
+      [
+        24,
+        "2026-10-12",
+        "cancelled",
+        "Customer 8"
+      ],
+      [
+        25,
+        "2026-10-13",
+        "pending",
+        "Customer 1"
+      ]
+    ]
+  },
+  {
+    "query": "-- 4.2: one row per order line.\nSELECT i.order_id,i.product_id,p.name,i.quantity,i.unit_price,i.quantity*i.unit_price AS line_total\nFROM order_items i JOIN products p USING(product_id);",
+    "columns": [
+      "order_id",
+      "product_id",
+      "name",
+      "quantity",
+      "unit_price",
+      "line_total"
+    ],
+    "rows": [
+      [
+        1,
+        1,
+        "Product 1",
+        1,
+        10,
+        10
+      ],
+      [
+        1,
+        2,
+        "Product 2",
+        2,
+        10,
+        20
+      ],
+      [
+        1,
+        3,
+        "Product 3",
+        3,
+        25,
+        75
+      ],
+      [
+        2,
+        4,
+        "Product 4",
+        1,
+        100,
+        100
+      ],
+      [
+        2,
+        5,
+        "Product 5",
+        2,
+        300,
+        600
+      ],
+      [
+        2,
+        6,
+        "Product 6",
+        3,
+        500,
+        1500
+      ],
+      [
+        3,
+        7,
+        "Product 7",
+        1,
+        1000,
+        1000
+      ],
+      [
+        3,
+        8,
+        "Product 8",
+        2,
+        45,
+        90
+      ],
+      [
+        3,
+        9,
+        "Product 9",
+        3,
+        90,
+        270
+      ],
+      [
+        4,
+        10,
+        "Product 10",
+        1,
+        150,
+        150
+      ],
+      [
+        4,
+        11,
+        "Product 11",
+        2,
+        220,
+        440
+      ],
+      [
+        4,
+        12,
+        "Product 12",
+        3,
+        350,
+        1050
+      ],
+      [
+        5,
+        13,
+        "Product 13",
+        1,
+        20,
+        20
+      ],
+      [
+        5,
+        14,
+        "Product 14",
+        2,
+        60,
+        120
+      ],
+      [
+        5,
+        15,
+        "Product 15",
+        3,
+        120,
+        360
+      ],
+      [
+        6,
+        16,
+        "Product 16",
+        1,
+        200,
+        200
+      ],
+      [
+        6,
+        17,
+        "Product 17",
+        2,
+        30,
+        60
+      ],
+      [
+        6,
+        18,
+        "Product 18",
+        3,
+        75,
+        225
+      ],
+      [
+        7,
+        1,
+        "Product 1",
+        1,
+        10,
+        10
+      ],
+      [
+        7,
+        2,
+        "Product 2",
+        2,
+        10,
+        20
+      ],
+      [
+        7,
+        3,
+        "Product 3",
+        3,
+        25,
+        75
+      ],
+      [
+        8,
+        4,
+        "Product 4",
+        1,
+        100,
+        100
+      ],
+      [
+        8,
+        5,
+        "Product 5",
+        2,
+        300,
+        600
+      ],
+      [
+        8,
+        6,
+        "Product 6",
+        3,
+        500,
+        1500
+      ],
+      [
+        9,
+        7,
+        "Product 7",
+        1,
+        1000,
+        1000
+      ],
+      [
+        9,
+        8,
+        "Product 8",
+        2,
+        45,
+        90
+      ],
+      [
+        9,
+        9,
+        "Product 9",
+        3,
+        90,
+        270
+      ],
+      [
+        10,
+        10,
+        "Product 10",
+        1,
+        150,
+        150
+      ],
+      [
+        10,
+        11,
+        "Product 11",
+        2,
+        220,
+        440
+      ],
+      [
+        10,
+        12,
+        "Product 12",
+        3,
+        350,
+        1050
+      ],
+      [
+        11,
+        13,
+        "Product 13",
+        1,
+        20,
+        20
+      ],
+      [
+        11,
+        14,
+        "Product 14",
+        2,
+        60,
+        120
+      ],
+      [
+        12,
+        16,
+        "Product 16",
+        1,
+        200,
+        200
+      ],
+      [
+        12,
+        17,
+        "Product 17",
+        2,
+        30,
+        60
+      ],
+      [
+        13,
+        1,
+        "Product 1",
+        1,
+        10,
+        10
+      ],
+      [
+        13,
+        2,
+        "Product 2",
+        2,
+        10,
+        20
+      ],
+      [
+        14,
+        4,
+        "Product 4",
+        1,
+        100,
+        100
+      ],
+      [
+        14,
+        5,
+        "Product 5",
+        2,
+        300,
+        600
+      ],
+      [
+        15,
+        7,
+        "Product 7",
+        1,
+        1000,
+        1000
+      ],
+      [
+        15,
+        8,
+        "Product 8",
+        2,
+        45,
+        90
+      ],
+      [
+        16,
+        10,
+        "Product 10",
+        1,
+        150,
+        150
+      ],
+      [
+        16,
+        11,
+        "Product 11",
+        2,
+        220,
+        440
+      ],
+      [
+        17,
+        13,
+        "Product 13",
+        1,
+        20,
+        20
+      ],
+      [
+        17,
+        14,
+        "Product 14",
+        2,
+        60,
+        120
+      ],
+      [
+        18,
+        16,
+        "Product 16",
+        1,
+        200,
+        200
+      ],
+      [
+        18,
+        17,
+        "Product 17",
+        2,
+        30,
+        60
+      ],
+      [
+        19,
+        1,
+        "Product 1",
+        1,
+        10,
+        10
+      ],
+      [
+        19,
+        2,
+        "Product 2",
+        2,
+        10,
+        20
+      ],
+      [
+        20,
+        4,
+        "Product 4",
+        1,
+        100,
+        100
+      ],
+      [
+        20,
+        5,
+        "Product 5",
+        2,
+        300,
+        600
+      ],
+      [
+        21,
+        7,
+        "Product 7",
+        1,
+        1000,
+        1000
+      ],
+      [
+        21,
+        8,
+        "Product 8",
+        2,
+        45,
+        90
+      ],
+      [
+        22,
+        10,
+        "Product 10",
+        1,
+        150,
+        150
+      ],
+      [
+        22,
+        11,
+        "Product 11",
+        2,
+        220,
+        440
+      ],
+      [
+        23,
+        13,
+        "Product 13",
+        1,
+        20,
+        20
+      ],
+      [
+        23,
+        14,
+        "Product 14",
+        2,
+        60,
+        120
+      ],
+      [
+        24,
+        16,
+        "Product 16",
+        1,
+        200,
+        200
+      ],
+      [
+        24,
+        17,
+        "Product 17",
+        2,
+        30,
+        60
+      ],
+      [
+        25,
+        1,
+        "Product 1",
+        1,
+        10,
+        10
+      ],
+      [
+        25,
+        2,
+        "Product 2",
+        2,
+        10,
+        20
+      ]
+    ]
+  },
+  {
+    "query": "-- 4.3: one row per product.\nSELECT p.product_id,p.name,c.name AS category_name FROM products p JOIN categories c USING(category_id);",
+    "columns": [
+      "product_id",
+      "name",
+      "category_name"
+    ],
+    "rows": [
+      [
+        1,
+        "Product 1",
+        "Electronics"
+      ],
+      [
+        2,
+        "Product 2",
+        "Electronics"
+      ],
+      [
+        3,
+        "Product 3",
+        "Electronics"
+      ],
+      [
+        4,
+        "Product 4",
+        "Electronics"
+      ],
+      [
+        5,
+        "Product 5",
+        "Electronics"
+      ],
+      [
+        6,
+        "Product 6",
+        "Office"
+      ],
+      [
+        7,
+        "Product 7",
+        "Office"
+      ],
+      [
+        8,
+        "Product 8",
+        "Office"
+      ],
+      [
+        9,
+        "Product 9",
+        "Office"
+      ],
+      [
+        10,
+        "Product 10",
+        "Home"
+      ],
+      [
+        11,
+        "Product 11",
+        "Home"
+      ],
+      [
+        12,
+        "Product 12",
+        "Home"
+      ],
+      [
+        13,
+        "Product 13",
+        "Sports"
+      ],
+      [
+        14,
+        "Product 14",
+        "Sports"
+      ],
+      [
+        15,
+        "Product 15",
+        "Sports"
+      ],
+      [
+        16,
+        "Product 16",
+        "Books"
+      ],
+      [
+        17,
+        "Product 17",
+        "Books"
+      ],
+      [
+        18,
+        "Product 18",
+        "Books"
+      ],
+      [
+        19,
+        "Product 19",
+        "Garden"
+      ],
+      [
+        20,
+        "Product 20",
+        "Garden"
+      ]
+    ]
+  },
+  {
+    "query": "-- 4.4: one row per customer, including zero revenue.\nSELECT c.customer_id,c.name,COALESCE(SUM(CASE WHEN o.status IN ('paid','shipped')\n THEN i.quantity*i.unit_price ELSE 0 END),0) AS revenue\nFROM customers c LEFT JOIN orders o USING(customer_id) LEFT JOIN order_items i USING(order_id)\nGROUP BY c.customer_id,c.name;",
+    "columns": [
+      "customer_id",
+      "name",
+      "revenue"
+    ],
+    "rows": [
+      [
+        1,
+        "Customer 1",
+        0
+      ],
+      [
+        2,
+        "Customer 2",
+        4100
+      ],
+      [
+        3,
+        "Customer 3",
+        1530
+      ],
+      [
+        4,
+        "Customer 4",
+        0
+      ],
+      [
+        5,
+        "Customer 5",
+        0
+      ],
+      [
+        6,
+        "Customer 6",
+        1775
+      ],
+      [
+        7,
+        "Customer 7",
+        1335
+      ],
+      [
+        8,
+        "Customer 8",
+        0
+      ],
+      [
+        9,
+        "Customer 9",
+        0
+      ],
+      [
+        10,
+        "Customer 10",
+        0
+      ]
+    ]
+  },
+  {
+    "query": "-- 4.5: one row per category.\nSELECT c.category_id,c.name,COALESCE(SUM(CASE WHEN o.status IN ('paid','shipped')\n THEN i.quantity*i.unit_price ELSE 0 END),0) AS revenue\nFROM categories c LEFT JOIN products p USING(category_id) LEFT JOIN order_items i USING(product_id)\nLEFT JOIN orders o USING(order_id) GROUP BY c.category_id,c.name;",
+    "columns": [
+      "category_id",
+      "name",
+      "revenue"
+    ],
+    "rows": [
+      [
+        1,
+        "Electronics",
+        1535
+      ],
+      [
+        2,
+        "Office",
+        3950
+      ],
+      [
+        3,
+        "Home",
+        2230
+      ],
+      [
+        4,
+        "Sports",
+        280
+      ],
+      [
+        5,
+        "Books",
+        745
+      ],
+      [
+        6,
+        "Garden",
+        0
+      ]
+    ]
+  },
+  {
+    "query": "-- 4.6-7: INNER JOIN would discard unmatched rows before the NULL test.\nSELECT c.customer_id,c.name FROM customers c LEFT JOIN orders o USING(customer_id) WHERE o.order_id IS NULL;",
+    "columns": [
+      "customer_id",
+      "name"
+    ],
+    "rows": [
+      [
+        9,
+        "Customer 9"
+      ],
+      [
+        10,
+        "Customer 10"
+      ]
+    ]
+  },
+  {
+    "query": "SELECT p.product_id,p.name FROM products p LEFT JOIN order_items i USING(product_id) WHERE i.order_id IS NULL;",
+    "columns": [
+      "product_id",
+      "name"
+    ],
+    "rows": [
+      [
+        19,
+        "Product 19"
+      ],
+      [
+        20,
+        "Product 20"
+      ]
+    ]
+  },
+  {
+    "query": "-- 5.1\nSELECT product_id,name,price FROM products WHERE price>(SELECT AVG(price) FROM products);",
+    "columns": [
+      "product_id",
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        5,
+        "Product 5",
+        300
+      ],
+      [
+        6,
+        "Product 6",
+        500
+      ],
+      [
+        7,
+        "Product 7",
+        1000
+      ],
+      [
+        11,
+        "Product 11",
+        220
+      ],
+      [
+        12,
+        "Product 12",
+        350
+      ],
+      [
+        16,
+        "Product 16",
+        200
+      ],
+      [
+        20,
+        "Product 20",
+        400
+      ]
+    ]
+  },
+  {
+    "query": "-- 5.2: average across ALL customers, including zero spend.\nWITH spend AS (\n SELECT c.customer_id,c.name,COALESCE(SUM(CASE WHEN o.status IN ('paid','shipped')\n THEN i.quantity*i.unit_price ELSE 0 END),0) AS lifetime_spend\n FROM customers c LEFT JOIN orders o USING(customer_id) LEFT JOIN order_items i USING(order_id)\n GROUP BY c.customer_id,c.name)\nSELECT * FROM spend WHERE lifetime_spend>(SELECT AVG(lifetime_spend) FROM spend);",
+    "columns": [
+      "customer_id",
+      "name",
+      "lifetime_spend"
+    ],
+    "rows": [
+      [
+        2,
+        "Customer 2",
+        4100
+      ],
+      [
+        3,
+        "Customer 3",
+        1530
+      ],
+      [
+        6,
+        "Customer 6",
+        1775
+      ],
+      [
+        7,
+        "Customer 7",
+        1335
+      ]
+    ]
+  },
+  {
+    "query": "-- 5.3: EXISTS returns each order once, even with several matching products.\nSELECT o.order_id,o.order_date FROM orders o WHERE EXISTS (\n SELECT 1 FROM order_items i JOIN products p USING(product_id)\n WHERE i.order_id=o.order_id AND p.category_id=1);",
+    "columns": [
+      "order_id",
+      "order_date"
+    ],
+    "rows": [
+      [
+        1,
+        "2026-10-01"
+      ],
+      [
+        25,
+        "2026-10-13"
+      ],
+      [
+        2,
+        "2026-10-01"
+      ],
+      [
+        19,
+        "2026-10-10"
+      ],
+      [
+        20,
+        "2026-10-10"
+      ],
+      [
+        13,
+        "2026-10-07"
+      ],
+      [
+        14,
+        "2026-10-07"
+      ],
+      [
+        7,
+        "2026-10-04"
+      ],
+      [
+        8,
+        "2026-10-04"
+      ]
+    ]
+  },
+  {
+    "query": "-- 5.4: chosen thresholds: gold >=1000 PLN, silver >=300 PLN, bronze <300 PLN.\nWITH spend AS (\n SELECT c.customer_id,COALESCE(SUM(CASE WHEN o.status IN ('paid','shipped')\n THEN i.quantity*i.unit_price ELSE 0 END),0) AS lifetime_spend\n FROM customers c LEFT JOIN orders o USING(customer_id) LEFT JOIN order_items i USING(order_id)\n GROUP BY c.customer_id), bands AS (\n SELECT customer_id,CASE WHEN lifetime_spend>=1000 THEN 'gold'\n WHEN lifetime_spend>=300 THEN 'silver' ELSE 'bronze' END AS customer_band FROM spend)\nSELECT customer_band,COUNT(*) AS customer_count FROM bands GROUP BY customer_band;",
+    "columns": [
+      "customer_band",
+      "customer_count"
+    ],
+    "rows": [
+      [
+        "bronze",
+        6
+      ],
+      [
+        "gold",
+        4
+      ]
+    ]
+  },
+  {
+    "query": "-- 6.1: tied prices share a rank.\nSELECT product_id,name,category_id,price,RANK() OVER(PARTITION BY category_id ORDER BY price DESC) AS price_rank FROM products;",
+    "columns": [
+      "product_id",
+      "name",
+      "category_id",
+      "price",
+      "price_rank"
+    ],
+    "rows": [
+      [
+        5,
+        "Product 5",
+        1,
+        300,
+        1
+      ],
+      [
+        4,
+        "Product 4",
+        1,
+        100,
+        2
+      ],
+      [
+        3,
+        "Product 3",
+        1,
+        25,
+        3
+      ],
+      [
+        1,
+        "Product 1",
+        1,
+        10,
+        4
+      ],
+      [
+        2,
+        "Product 2",
+        1,
+        10,
+        4
+      ],
+      [
+        7,
+        "Product 7",
+        2,
+        1000,
+        1
+      ],
+      [
+        6,
+        "Product 6",
+        2,
+        500,
+        2
+      ],
+      [
+        9,
+        "Product 9",
+        2,
+        90,
+        3
+      ],
+      [
+        8,
+        "Product 8",
+        2,
+        45,
+        4
+      ],
+      [
+        12,
+        "Product 12",
+        3,
+        350,
+        1
+      ],
+      [
+        11,
+        "Product 11",
+        3,
+        220,
+        2
+      ],
+      [
+        10,
+        "Product 10",
+        3,
+        150,
+        3
+      ],
+      [
+        15,
+        "Product 15",
+        4,
+        120,
+        1
+      ],
+      [
+        14,
+        "Product 14",
+        4,
+        60,
+        2
+      ],
+      [
+        13,
+        "Product 13",
+        4,
+        20,
+        3
+      ],
+      [
+        16,
+        "Product 16",
+        5,
+        200,
+        1
+      ],
+      [
+        18,
+        "Product 18",
+        5,
+        75,
+        2
+      ],
+      [
+        17,
+        "Product 17",
+        5,
+        30,
+        3
+      ],
+      [
+        20,
+        "Product 20",
+        6,
+        400,
+        1
+      ],
+      [
+        19,
+        "Product 19",
+        6,
+        180,
+        2
+      ]
+    ]
+  },
+  {
+    "query": "-- 6.5: at most two products per category, deterministic on ties.\nWITH ranked AS (SELECT *,ROW_NUMBER() OVER(PARTITION BY category_id ORDER BY price DESC,product_id) AS rn FROM products)\nSELECT product_id,name,category_id,price,rn FROM ranked WHERE rn<=2 ORDER BY category_id,rn;",
+    "columns": [
+      "product_id",
+      "name",
+      "category_id",
+      "price",
+      "rn"
+    ],
+    "rows": [
+      [
+        5,
+        "Product 5",
+        1,
+        300,
+        1
+      ],
+      [
+        4,
+        "Product 4",
+        1,
+        100,
+        2
+      ],
+      [
+        7,
+        "Product 7",
+        2,
+        1000,
+        1
+      ],
+      [
+        6,
+        "Product 6",
+        2,
+        500,
+        2
+      ],
+      [
+        12,
+        "Product 12",
+        3,
+        350,
+        1
+      ],
+      [
+        11,
+        "Product 11",
+        3,
+        220,
+        2
+      ],
+      [
+        15,
+        "Product 15",
+        4,
+        120,
+        1
+      ],
+      [
+        14,
+        "Product 14",
+        4,
+        60,
+        2
+      ],
+      [
+        16,
+        "Product 16",
+        5,
+        200,
+        1
+      ],
+      [
+        18,
+        "Product 18",
+        5,
+        75,
+        2
+      ],
+      [
+        20,
+        "Product 20",
+        6,
+        400,
+        1
+      ],
+      [
+        19,
+        "Product 19",
+        6,
+        180,
+        2
+      ]
+    ]
+  },
+  {
+    "query": "-- 6.2-3: order values include every status; ties in dates use order_id.\nWITH totals AS (SELECT o.order_id,o.customer_id,o.order_date,COALESCE(SUM(i.quantity*i.unit_price),0) AS order_value\n FROM orders o LEFT JOIN order_items i USING(order_id) GROUP BY o.order_id,o.customer_id,o.order_date)\nSELECT *,AVG(order_value) OVER(PARTITION BY customer_id) AS customer_average_order_value,\n LAG(order_value) OVER(PARTITION BY customer_id ORDER BY order_date,order_id) AS previous_order_value\nFROM totals ORDER BY customer_id,order_date,order_id;",
+    "columns": [
+      "order_id",
+      "customer_id",
+      "order_date",
+      "order_value",
+      "customer_average_order_value",
+      "previous_order_value"
+    ],
+    "rows": [
+      [
+        1,
+        1,
+        "2026-10-01",
+        105,
+        408.75,
+        null
+      ],
+      [
+        9,
+        1,
+        "2026-10-05",
+        1360,
+        408.75,
+        105
+      ],
+      [
+        17,
+        1,
+        "2026-10-09",
+        140,
+        408.75,
+        1360
+      ],
+      [
+        25,
+        1,
+        "2026-10-13",
+        30,
+        408.75,
+        140
+      ],
+      [
+        2,
+        2,
+        "2026-10-01",
+        2200,
+        1366.6666666666667,
+        null
+      ],
+      [
+        10,
+        2,
+        "2026-10-05",
+        1640,
+        1366.6666666666667,
+        2200
+      ],
+      [
+        18,
+        2,
+        "2026-10-09",
+        260,
+        1366.6666666666667,
+        1640
+      ],
+      [
+        3,
+        3,
+        "2026-10-02",
+        1360,
+        510.0,
+        null
+      ],
+      [
+        11,
+        3,
+        "2026-10-06",
+        140,
+        510.0,
+        1360
+      ],
+      [
+        19,
+        3,
+        "2026-10-10",
+        30,
+        510.0,
+        140
+      ],
+      [
+        4,
+        4,
+        "2026-10-02",
+        1640,
+        866.6666666666666,
+        null
+      ],
+      [
+        12,
+        4,
+        "2026-10-06",
+        260,
+        866.6666666666666,
+        1640
+      ],
+      [
+        20,
+        4,
+        "2026-10-10",
+        700,
+        866.6666666666666,
+        260
+      ],
+      [
+        5,
+        5,
+        "2026-10-03",
+        500,
+        540.0,
+        null
+      ],
+      [
+        13,
+        5,
+        "2026-10-07",
+        30,
+        540.0,
+        500
+      ],
+      [
+        21,
+        5,
+        "2026-10-11",
+        1090,
+        540.0,
+        30
+      ],
+      [
+        6,
+        6,
+        "2026-10-03",
+        485,
+        591.6666666666666,
+        null
+      ],
+      [
+        14,
+        6,
+        "2026-10-07",
+        700,
+        591.6666666666666,
+        485
+      ],
+      [
+        22,
+        6,
+        "2026-10-11",
+        590,
+        591.6666666666666,
+        700
+      ],
+      [
+        7,
+        7,
+        "2026-10-04",
+        105,
+        445.0,
+        null
+      ],
+      [
+        15,
+        7,
+        "2026-10-08",
+        1090,
+        445.0,
+        105
+      ],
+      [
+        23,
+        7,
+        "2026-10-12",
+        140,
+        445.0,
+        1090
+      ],
+      [
+        8,
+        8,
+        "2026-10-04",
+        2200,
+        1016.6666666666666,
+        null
+      ],
+      [
+        16,
+        8,
+        "2026-10-08",
+        590,
+        1016.6666666666666,
+        2200
+      ],
+      [
+        24,
+        8,
+        "2026-10-12",
+        260,
+        1016.6666666666666,
+        590
+      ]
+    ]
+  },
+  {
+    "query": "-- 6.4: aggregate qualifying revenue to daily grain before the running sum.\nWITH daily AS (SELECT o.order_date,SUM(i.quantity*i.unit_price) AS daily_revenue\n FROM orders o JOIN order_items i USING(order_id) WHERE o.status IN ('paid','shipped') GROUP BY o.order_date)\nSELECT order_date,daily_revenue,SUM(daily_revenue) OVER(ORDER BY order_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_revenue\nFROM daily ORDER BY order_date;",
+    "columns": [
+      "order_date",
+      "daily_revenue",
+      "running_revenue"
+    ],
+    "rows": [
+      [
+        "2026-10-01",
+        2200,
+        2200
+      ],
+      [
+        "2026-10-02",
+        1360,
+        3560
+      ],
+      [
+        "2026-10-03",
+        485,
+        4045
+      ],
+      [
+        "2026-10-04",
+        105,
+        4150
+      ],
+      [
+        "2026-10-05",
+        1640,
+        5790
+      ],
+      [
+        "2026-10-06",
+        140,
+        5930
+      ],
+      [
+        "2026-10-07",
+        700,
+        6630
+      ],
+      [
+        "2026-10-08",
+        1090,
+        7720
+      ],
+      [
+        "2026-10-09",
+        260,
+        7980
+      ],
+      [
+        "2026-10-10",
+        30,
+        8010
+      ],
+      [
+        "2026-10-11",
+        590,
+        8600
+      ],
+      [
+        "2026-10-12",
+        140,
+        8740
+      ]
+    ]
+  }
+]

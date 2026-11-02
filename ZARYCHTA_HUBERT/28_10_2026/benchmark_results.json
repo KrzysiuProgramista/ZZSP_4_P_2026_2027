@@ -1,0 +1,47 @@
+{
+  "method": "5 fresh in-memory databases per condition, 100000 identical rows, one transaction per insert batch, 100 fully fetched lookups per run. Index exists before timed indexed inserts; creation time excluded. Units: seconds.",
+  "plans": {
+    "unindexed": [
+      "SCAN bench"
+    ],
+    "indexed": [
+      "SEARCH bench USING INDEX idx_bench_code (product_code=?)"
+    ]
+  },
+  "runs": {
+    "unindexed_insert": [
+      0.04215879994444549,
+      0.04083189996890724,
+      0.048899499932304025,
+      0.05720169981941581,
+      0.03922859998419881
+    ],
+    "indexed_insert": [
+      0.06983860000036657,
+      0.074058499885723,
+      0.06475030002184212,
+      0.07054849993437529,
+      0.06544839986599982
+    ],
+    "unindexed_lookup": [
+      0.001966272999998182,
+      0.002266781001817435,
+      0.0024379209987819197,
+      0.0021804449986666443,
+      0.0019716959982179105
+    ],
+    "indexed_lookup": [
+      1.4150002971291542e-06,
+      1.4219991862773894e-06,
+      1.4150002971291542e-06,
+      1.9720010459423066e-06,
+      1.471999567002058e-06
+    ]
+  },
+  "median_seconds": {
+    "unindexed_insert": 0.04215879994444549,
+    "indexed_insert": 0.06983860000036657,
+    "unindexed_lookup": 0.0021804449986666443,
+    "indexed_lookup": 1.4219991862773894e-06
+  }
+}

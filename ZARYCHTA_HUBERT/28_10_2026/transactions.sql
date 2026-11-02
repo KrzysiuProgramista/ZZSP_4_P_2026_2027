@@ -1,0 +1,11 @@
+-- Exercise 7: executable transaction and error handling are in run.py.
+-- Order creation, order lines and stock updates must share one transaction:
+-- otherwise a failure could leave an incomplete order or decrease stock
+-- without recording a purchase. Check every guarded UPDATE row count.
+-- BEGIN IMMEDIATE obtains the SQLite write lock before reading stock/prices.
+-- Workflow (parameters are bound by Python):
+-- BEGIN IMMEDIATE;
+-- INSERT INTO orders(customer_id,order_date,status) VALUES(?,?,'paid');
+-- INSERT INTO order_items VALUES(?,?,?,?);
+-- UPDATE products SET stock=stock-? WHERE product_id=? AND stock>=?;
+-- COMMIT only if every line succeeds; otherwise ROLLBACK.
