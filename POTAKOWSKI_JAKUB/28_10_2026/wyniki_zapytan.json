@@ -1,0 +1,1866 @@
+[
+  {
+    "sql": "-- Slajdy 27-35. Kwoty raportowane w PLN, baza przechowuje grosze.\n-- Obrot = paid lub sent. new i cancelled nie tworza przychodu.\n-- 2. Filtrowanie; BETWEEN obejmuje oba konce. LIMIT zwraca dokladnie 5\n-- produktow, rowne ceny rozstrzyga kod produktu.\nSELECT product_code,name,price_cents/100.0 AS cena_pln FROM products WHERE category_id=2 ORDER BY price_cents,product_code;",
+    "columns": [
+      "product_code",
+      "name",
+      "cena_pln"
+    ],
+    "rows": [
+      [
+        "SP-0008",
+        "Kompas",
+        45.0
+      ],
+      [
+        "SP-0007",
+        "Latarka",
+        89.0
+      ],
+      [
+        "SP-0009",
+        "Mata turystyczna",
+        129.0
+      ],
+      [
+        "SP-0006",
+        "Plecak 30L",
+        229.0
+      ]
+    ]
+  },
+  {
+    "sql": "SELECT name,price_cents/100.0 AS cena_pln FROM products WHERE price_cents BETWEEN 2500 AND 9900 ORDER BY price_cents,name;",
+    "columns": [
+      "name",
+      "cena_pln"
+    ],
+    "rows": [
+      [
+        "Czepek",
+        25.0
+      ],
+      [
+        "Dzwonek",
+        25.0
+      ],
+      [
+        "Skarpety sportowe",
+        25.0
+      ],
+      [
+        "Bidon",
+        35.0
+      ],
+      [
+        "Guma oporowa",
+        35.0
+      ],
+      [
+        "Kompas",
+        45.0
+      ],
+      [
+        "Deska plywacka",
+        59.0
+      ],
+      [
+        "Pilka treningowa",
+        65.0
+      ],
+      [
+        "Gogle",
+        69.0
+      ],
+      [
+        "Lampka przednia",
+        79.0
+      ],
+      [
+        "Pas biegowy",
+        79.0
+      ],
+      [
+        "Latarka",
+        89.0
+      ],
+      [
+        "Okulary biegowe",
+        99.0
+      ],
+      [
+        "Walek do masazu",
+        99.0
+      ]
+    ]
+  },
+  {
+    "sql": "SELECT name,email FROM customers WHERE email LIKE '%@sport.test' ORDER BY name;",
+    "columns": [
+      "name",
+      "email"
+    ],
+    "rows": [
+      [
+        "Adam Wilk",
+        "klient4@sport.test"
+      ],
+      [
+        "Anna Lis",
+        "klient1@sport.test"
+      ],
+      [
+        "Iga Nowak",
+        "klient7@sport.test"
+      ],
+      [
+        "Jan Mazur",
+        "klient2@sport.test"
+      ],
+      [
+        "Marek Kaczor",
+        "klient8@sport.test"
+      ],
+      [
+        "Ola Kot",
+        "klient5@sport.test"
+      ],
+      [
+        "Tomasz Baran",
+        "klient10@sport.test"
+      ]
+    ]
+  },
+  {
+    "sql": "SELECT product_code,name,price_cents/100.0 AS cena_pln FROM products ORDER BY price_cents DESC,product_code LIMIT 5;",
+    "columns": [
+      "product_code",
+      "name",
+      "cena_pln"
+    ],
+    "rows": [
+      [
+        "SP-0020",
+        "Ochraniacz plecow",
+        299.0
+      ],
+      [
+        "SP-0006",
+        "Plecak 30L",
+        229.0
+      ],
+      [
+        "SP-0001",
+        "Kask miejski",
+        159.0
+      ],
+      [
+        "SP-0019",
+        "Rekawice narciarskie",
+        149.0
+      ],
+      [
+        "SP-0009",
+        "Mata turystyczna",
+        129.0
+      ]
+    ]
+  },
+  {
+    "sql": "SELECT DISTINCT status FROM orders ORDER BY status;",
+    "columns": [
+      "status"
+    ],
+    "rows": [
+      [
+        "cancelled"
+      ],
+      [
+        "new"
+      ],
+      [
+        "paid"
+      ],
+      [
+        "sent"
+      ]
+    ]
+  },
+  {
+    "sql": "-- 3. Oddzielnie liczebnosc oraz statystyki kategorii.\nSELECT c.name,COUNT(p.product_id) AS liczba_produktow FROM categories c LEFT JOIN products p ON p.category_id=c.category_id GROUP BY c.category_id ORDER BY c.category_id;",
+    "columns": [
+      "name",
+      "liczba_produktow"
+    ],
+    "rows": [
+      [
+        "Akcesoria rowerowe",
+        5
+      ],
+      [
+        "Turystyka",
+        4
+      ],
+      [
+        "Plywanie",
+        3
+      ],
+      [
+        "Bieganie",
+        3
+      ],
+      [
+        "Fitness",
+        3
+      ],
+      [
+        "Sporty zimowe",
+        2
+      ]
+    ]
+  },
+  {
+    "sql": "SELECT c.name,AVG(p.price_cents)/100.0 AS srednia_pln,MIN(p.price_cents)/100.0 AS minimum_pln,MAX(p.price_cents)/100.0 AS maksimum_pln FROM categories c LEFT JOIN products p ON p.category_id=c.category_id GROUP BY c.category_id;",
+    "columns": [
+      "name",
+      "srednia_pln",
+      "minimum_pln",
+      "maksimum_pln"
+    ],
+    "rows": [
+      [
+        "Akcesoria rowerowe",
+        83.4,
+        25.0,
+        159.0
+      ],
+      [
+        "Turystyka",
+        123.0,
+        45.0,
+        229.0
+      ],
+      [
+        "Plywanie",
+        51.0,
+        25.0,
+        69.0
+      ],
+      [
+        "Bieganie",
+        67.66666666666667,
+        25.0,
+        99.0
+      ],
+      [
+        "Fitness",
+        66.33333333333333,
+        35.0,
+        99.0
+      ],
+      [
+        "Sporty zimowe",
+        224.0,
+        149.0,
+        299.0
+      ]
+    ]
+  },
+  {
+    "sql": "SELECT category_id,COUNT(*) AS liczba FROM products GROUP BY category_id HAVING COUNT(*)>3;",
+    "columns": [
+      "category_id",
+      "liczba"
+    ],
+    "rows": [
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        4
+      ]
+    ]
+  },
+  {
+    "sql": "SELECT o.order_id,COALESCE(t.suma,0)/100.0 AS wartosc_pln FROM orders o LEFT JOIN (SELECT order_id,SUM(quantity*unit_price_cents) AS suma FROM order_items GROUP BY order_id) t ON t.order_id=o.order_id ORDER BY o.order_id;",
+    "columns": [
+      "order_id",
+      "wartosc_pln"
+    ],
+    "rows": [
+      [
+        1,
+        593.0
+      ],
+      [
+        2,
+        174.0
+      ],
+      [
+        3,
+        230.0
+      ],
+      [
+        4,
+        407.0
+      ],
+      [
+        5,
+        559.0
+      ],
+      [
+        6,
+        146.0
+      ],
+      [
+        7,
+        435.0
+      ],
+      [
+        8,
+        446.0
+      ],
+      [
+        9,
+        184.0
+      ],
+      [
+        10,
+        454.0
+      ],
+      [
+        11,
+        272.0
+      ],
+      [
+        12,
+        344.0
+      ],
+      [
+        13,
+        355.0
+      ],
+      [
+        14,
+        354.0
+      ],
+      [
+        15,
+        690.0
+      ],
+      [
+        16,
+        333.0
+      ],
+      [
+        17,
+        272.0
+      ],
+      [
+        18,
+        206.0
+      ],
+      [
+        19,
+        593.0
+      ],
+      [
+        20,
+        419.0
+      ],
+      [
+        21,
+        230.0
+      ],
+      [
+        22,
+        407.0
+      ],
+      [
+        23,
+        204.0
+      ],
+      [
+        24,
+        146.0
+      ],
+      [
+        25,
+        928.0
+      ]
+    ]
+  },
+  {
+    "sql": "-- WHERE odrzuca konkretne produkty przed liczeniem. HAVING ocenia wynik\n-- calej grupy. Tutaj liczebnosc dotyczy tylko produktow drozszych niz 10 PLN.\nSELECT category_id,COUNT(*) AS liczba,AVG(price_cents)/100.0 AS srednia_pln FROM products WHERE price_cents>1000 GROUP BY category_id HAVING COUNT(*)>3;",
+    "columns": [
+      "category_id",
+      "liczba",
+      "srednia_pln"
+    ],
+    "rows": [
+      [
+        1,
+        5,
+        83.4
+      ],
+      [
+        2,
+        4,
+        123.0
+      ]
+    ]
+  },
+  {
+    "sql": "-- 4. Ziarno: zamowienie / pozycja / produkt / klient / kategoria.\nSELECT o.order_id,c.name AS klient,o.order_date,o.status FROM customers c JOIN orders o ON o.customer_id=c.customer_id ORDER BY o.order_id;",
+    "columns": [
+      "order_id",
+      "klient",
+      "order_date",
+      "status"
+    ],
+    "rows": [
+      [
+        1,
+        "Adam Wilk",
+        "2026-10-03",
+        "paid"
+      ],
+      [
+        2,
+        "Iga Nowak",
+        "2026-10-05",
+        "sent"
+      ],
+      [
+        3,
+        "Jan Mazur",
+        "2026-10-07",
+        "new"
+      ],
+      [
+        4,
+        "Ola Kot",
+        "2026-10-09",
+        "paid"
+      ],
+      [
+        5,
+        "Marek Kaczor",
+        "2026-10-11",
+        "cancelled"
+      ],
+      [
+        6,
+        "Ewa Kruk",
+        "2026-10-13",
+        "paid"
+      ],
+      [
+        7,
+        "Piotr Sikora",
+        "2026-10-15",
+        "sent"
+      ],
+      [
+        8,
+        "Anna Lis",
+        "2026-10-17",
+        "new"
+      ],
+      [
+        9,
+        "Adam Wilk",
+        "2026-10-19",
+        "paid"
+      ],
+      [
+        10,
+        "Iga Nowak",
+        "2026-10-21",
+        "cancelled"
+      ],
+      [
+        11,
+        "Jan Mazur",
+        "2026-10-23",
+        "paid"
+      ],
+      [
+        12,
+        "Ola Kot",
+        "2026-10-25",
+        "sent"
+      ],
+      [
+        13,
+        "Marek Kaczor",
+        "2026-10-27",
+        "new"
+      ],
+      [
+        14,
+        "Ewa Kruk",
+        "2026-10-02",
+        "paid"
+      ],
+      [
+        15,
+        "Piotr Sikora",
+        "2026-10-04",
+        "cancelled"
+      ],
+      [
+        16,
+        "Anna Lis",
+        "2026-10-06",
+        "paid"
+      ],
+      [
+        17,
+        "Adam Wilk",
+        "2026-10-08",
+        "sent"
+      ],
+      [
+        18,
+        "Iga Nowak",
+        "2026-10-10",
+        "new"
+      ],
+      [
+        19,
+        "Jan Mazur",
+        "2026-10-12",
+        "paid"
+      ],
+      [
+        20,
+        "Ola Kot",
+        "2026-10-14",
+        "cancelled"
+      ],
+      [
+        21,
+        "Marek Kaczor",
+        "2026-10-16",
+        "paid"
+      ],
+      [
+        22,
+        "Ewa Kruk",
+        "2026-10-18",
+        "sent"
+      ],
+      [
+        23,
+        "Piotr Sikora",
+        "2026-10-20",
+        "new"
+      ],
+      [
+        24,
+        "Anna Lis",
+        "2026-10-22",
+        "paid"
+      ],
+      [
+        25,
+        "Adam Wilk",
+        "2026-10-24",
+        "cancelled"
+      ]
+    ]
+  },
+  {
+    "sql": "SELECT i.order_id,p.name,i.quantity,i.unit_price_cents/100.0 AS cena_zakupu_pln,(i.quantity*i.unit_price_cents)/100.0 AS wartosc_pozycji_pln FROM products p JOIN order_items i ON i.product_id=p.product_id ORDER BY i.order_id,p.product_id;",
+    "columns": [
+      "order_id",
+      "name",
+      "quantity",
+      "cena_zakupu_pln",
+      "wartosc_pozycji_pln"
+    ],
+    "rows": [
+      [
+        1,
+        "Plecak 30L",
+        2,
+        229.0,
+        458.0
+      ],
+      [
+        1,
+        "Kompas",
+        3,
+        45.0,
+        135.0
+      ],
+      [
+        2,
+        "Czepek",
+        3,
+        25.0,
+        75.0
+      ],
+      [
+        2,
+        "Okulary biegowe",
+        1,
+        99.0,
+        99.0
+      ],
+      [
+        3,
+        "Guma oporowa",
+        1,
+        34.0,
+        34.0
+      ],
+      [
+        3,
+        "Walek do masazu",
+        2,
+        98.0,
+        196.0
+      ],
+      [
+        4,
+        "Dzwonek",
+        2,
+        25.0,
+        50.0
+      ],
+      [
+        4,
+        "Zapiecie",
+        3,
+        119.0,
+        357.0
+      ],
+      [
+        5,
+        "Kompas",
+        3,
+        45.0,
+        135.0
+      ],
+      [
+        5,
+        "Gogle",
+        1,
+        69.0,
+        69.0
+      ],
+      [
+        5,
+        "Deska plywacka",
+        2,
+        59.0,
+        118.0
+      ],
+      [
+        5,
+        "Pas biegowy",
+        3,
+        79.0,
+        237.0
+      ],
+      [
+        6,
+        "Okulary biegowe",
+        1,
+        98.0,
+        98.0
+      ],
+      [
+        6,
+        "Skarpety sportowe",
+        2,
+        24.0,
+        48.0
+      ],
+      [
+        7,
+        "Lampka przednia",
+        3,
+        79.0,
+        237.0
+      ],
+      [
+        7,
+        "Walek do masazu",
+        2,
+        99.0,
+        198.0
+      ],
+      [
+        8,
+        "Zapiecie",
+        3,
+        119.0,
+        357.0
+      ],
+      [
+        8,
+        "Latarka",
+        1,
+        89.0,
+        89.0
+      ],
+      [
+        9,
+        "Gogle",
+        1,
+        68.0,
+        68.0
+      ],
+      [
+        9,
+        "Deska plywacka",
+        2,
+        58.0,
+        116.0
+      ],
+      [
+        10,
+        "Kask miejski",
+        1,
+        159.0,
+        159.0
+      ],
+      [
+        10,
+        "Dzwonek",
+        2,
+        25.0,
+        50.0
+      ],
+      [
+        10,
+        "Skarpety sportowe",
+        2,
+        25.0,
+        50.0
+      ],
+      [
+        10,
+        "Pilka treningowa",
+        3,
+        65.0,
+        195.0
+      ],
+      [
+        11,
+        "Lampka przednia",
+        3,
+        79.0,
+        237.0
+      ],
+      [
+        11,
+        "Bidon",
+        1,
+        35.0,
+        35.0
+      ],
+      [
+        12,
+        "Latarka",
+        1,
+        88.0,
+        88.0
+      ],
+      [
+        12,
+        "Mata turystyczna",
+        2,
+        128.0,
+        256.0
+      ],
+      [
+        13,
+        "Deska plywacka",
+        2,
+        59.0,
+        118.0
+      ],
+      [
+        13,
+        "Pas biegowy",
+        3,
+        79.0,
+        237.0
+      ],
+      [
+        14,
+        "Kask miejski",
+        1,
+        159.0,
+        159.0
+      ],
+      [
+        14,
+        "Pilka treningowa",
+        3,
+        65.0,
+        195.0
+      ],
+      [
+        15,
+        "Bidon",
+        1,
+        34.0,
+        34.0
+      ],
+      [
+        15,
+        "Plecak 30L",
+        2,
+        228.0,
+        456.0
+      ],
+      [
+        15,
+        "Kompas",
+        3,
+        44.0,
+        132.0
+      ],
+      [
+        15,
+        "Gogle",
+        1,
+        68.0,
+        68.0
+      ],
+      [
+        16,
+        "Mata turystyczna",
+        2,
+        129.0,
+        258.0
+      ],
+      [
+        16,
+        "Czepek",
+        3,
+        25.0,
+        75.0
+      ],
+      [
+        17,
+        "Pas biegowy",
+        3,
+        79.0,
+        237.0
+      ],
+      [
+        17,
+        "Guma oporowa",
+        1,
+        35.0,
+        35.0
+      ],
+      [
+        18,
+        "Kask miejski",
+        1,
+        158.0,
+        158.0
+      ],
+      [
+        18,
+        "Dzwonek",
+        2,
+        24.0,
+        48.0
+      ],
+      [
+        19,
+        "Plecak 30L",
+        2,
+        229.0,
+        458.0
+      ],
+      [
+        19,
+        "Kompas",
+        3,
+        45.0,
+        135.0
+      ],
+      [
+        20,
+        "Czepek",
+        3,
+        25.0,
+        75.0
+      ],
+      [
+        20,
+        "Okulary biegowe",
+        1,
+        99.0,
+        99.0
+      ],
+      [
+        20,
+        "Skarpety sportowe",
+        2,
+        25.0,
+        50.0
+      ],
+      [
+        20,
+        "Pilka treningowa",
+        3,
+        65.0,
+        195.0
+      ],
+      [
+        21,
+        "Guma oporowa",
+        1,
+        34.0,
+        34.0
+      ],
+      [
+        21,
+        "Walek do masazu",
+        2,
+        98.0,
+        196.0
+      ],
+      [
+        22,
+        "Dzwonek",
+        2,
+        25.0,
+        50.0
+      ],
+      [
+        22,
+        "Zapiecie",
+        3,
+        119.0,
+        357.0
+      ],
+      [
+        23,
+        "Kompas",
+        3,
+        45.0,
+        135.0
+      ],
+      [
+        23,
+        "Gogle",
+        1,
+        69.0,
+        69.0
+      ],
+      [
+        24,
+        "Okulary biegowe",
+        1,
+        98.0,
+        98.0
+      ],
+      [
+        24,
+        "Skarpety sportowe",
+        2,
+        24.0,
+        48.0
+      ],
+      [
+        25,
+        "Lampka przednia",
+        3,
+        79.0,
+        237.0
+      ],
+      [
+        25,
+        "Bidon",
+        1,
+        35.0,
+        35.0
+      ],
+      [
+        25,
+        "Plecak 30L",
+        2,
+        229.0,
+        458.0
+      ],
+      [
+        25,
+        "Walek do masazu",
+        2,
+        99.0,
+        198.0
+      ]
+    ]
+  },
+  {
+    "sql": "SELECT p.product_code,p.name,c.name AS kategoria FROM categories c JOIN products p ON p.category_id=c.category_id ORDER BY p.product_id;",
+    "columns": [
+      "product_code",
+      "name",
+      "kategoria"
+    ],
+    "rows": [
+      [
+        "SP-0001",
+        "Kask miejski",
+        "Akcesoria rowerowe"
+      ],
+      [
+        "SP-0002",
+        "Lampka przednia",
+        "Akcesoria rowerowe"
+      ],
+      [
+        "SP-0003",
+        "Dzwonek",
+        "Akcesoria rowerowe"
+      ],
+      [
+        "SP-0004",
+        "Bidon",
+        "Akcesoria rowerowe"
+      ],
+      [
+        "SP-0005",
+        "Zapiecie",
+        "Akcesoria rowerowe"
+      ],
+      [
+        "SP-0006",
+        "Plecak 30L",
+        "Turystyka"
+      ],
+      [
+        "SP-0007",
+        "Latarka",
+        "Turystyka"
+      ],
+      [
+        "SP-0008",
+        "Kompas",
+        "Turystyka"
+      ],
+      [
+        "SP-0009",
+        "Mata turystyczna",
+        "Turystyka"
+      ],
+      [
+        "SP-0010",
+        "Gogle",
+        "Plywanie"
+      ],
+      [
+        "SP-0011",
+        "Czepek",
+        "Plywanie"
+      ],
+      [
+        "SP-0012",
+        "Deska plywacka",
+        "Plywanie"
+      ],
+      [
+        "SP-0013",
+        "Okulary biegowe",
+        "Bieganie"
+      ],
+      [
+        "SP-0014",
+        "Pas biegowy",
+        "Bieganie"
+      ],
+      [
+        "SP-0015",
+        "Skarpety sportowe",
+        "Bieganie"
+      ],
+      [
+        "SP-0016",
+        "Guma oporowa",
+        "Fitness"
+      ],
+      [
+        "SP-0017",
+        "Pilka treningowa",
+        "Fitness"
+      ],
+      [
+        "SP-0018",
+        "Walek do masazu",
+        "Fitness"
+      ],
+      [
+        "SP-0019",
+        "Rekawice narciarskie",
+        "Sporty zimowe"
+      ],
+      [
+        "SP-0020",
+        "Ochraniacz plecow",
+        "Sporty zimowe"
+      ]
+    ]
+  },
+  {
+    "sql": "WITH paid_totals AS (SELECT o.customer_id,SUM(i.quantity*i.unit_price_cents) AS cents FROM orders o JOIN order_items i ON i.order_id=o.order_id WHERE o.status IN ('paid','sent') GROUP BY o.customer_id)\nSELECT c.customer_id,c.name,COALESCE(t.cents,0)/100.0 AS przychod_pln FROM customers c LEFT JOIN paid_totals t ON t.customer_id=c.customer_id ORDER BY c.customer_id;",
+    "columns": [
+      "customer_id",
+      "name",
+      "przychod_pln"
+    ],
+    "rows": [
+      [
+        1,
+        "Anna Lis",
+        479.0
+      ],
+      [
+        2,
+        "Jan Mazur",
+        865.0
+      ],
+      [
+        3,
+        "Ewa Kruk",
+        907.0
+      ],
+      [
+        4,
+        "Adam Wilk",
+        1049.0
+      ],
+      [
+        5,
+        "Ola Kot",
+        751.0
+      ],
+      [
+        6,
+        "Piotr Sikora",
+        435.0
+      ],
+      [
+        7,
+        "Iga Nowak",
+        174.0
+      ],
+      [
+        8,
+        "Marek Kaczor",
+        230.0
+      ],
+      [
+        9,
+        "Lena Wojcik",
+        0.0
+      ],
+      [
+        10,
+        "Tomasz Baran",
+        0.0
+      ]
+    ]
+  },
+  {
+    "sql": "WITH sales AS (SELECT p.category_id,SUM(i.quantity*i.unit_price_cents) AS cents FROM products p JOIN order_items i ON i.product_id=p.product_id JOIN orders o ON o.order_id=i.order_id WHERE o.status IN ('paid','sent') GROUP BY p.category_id)\nSELECT c.name,COALESCE(s.cents,0)/100.0 AS przychod_pln FROM categories c LEFT JOIN sales s ON s.category_id=c.category_id ORDER BY c.category_id;",
+    "columns": [
+      "name",
+      "przychod_pln"
+    ],
+    "rows": [
+      [
+        "Akcesoria rowerowe",
+        1482.0
+      ],
+      [
+        "Turystyka",
+        1788.0
+      ],
+      [
+        "Plywanie",
+        334.0
+      ],
+      [
+        "Bieganie",
+        628.0
+      ],
+      [
+        "Fitness",
+        658.0
+      ],
+      [
+        "Sporty zimowe",
+        0.0
+      ]
+    ]
+  },
+  {
+    "sql": "-- INNER JOIN usuwa rekordy bez dopasowania. Nie moglby pokazac brakujacych\n-- relacji. LEFT JOIN zachowuje lewa strone i daje NULL po prawej.\nSELECT c.customer_id,c.name FROM customers c LEFT JOIN orders o ON o.customer_id=c.customer_id WHERE o.order_id IS NULL ORDER BY c.customer_id;",
+    "columns": [
+      "customer_id",
+      "name"
+    ],
+    "rows": [
+      [
+        9,
+        "Lena Wojcik"
+      ],
+      [
+        10,
+        "Tomasz Baran"
+      ]
+    ]
+  },
+  {
+    "sql": "SELECT p.product_id,p.name FROM products p LEFT JOIN order_items i ON i.product_id=p.product_id WHERE i.order_id IS NULL ORDER BY p.product_id;",
+    "columns": [
+      "product_id",
+      "name"
+    ],
+    "rows": [
+      [
+        19,
+        "Rekawice narciarskie"
+      ],
+      [
+        20,
+        "Ochraniacz plecow"
+      ]
+    ]
+  },
+  {
+    "sql": "-- 5. Podzapytania: srednia cen i wydatki wszystkich 10 klientow (brak = 0).\nSELECT name,price_cents/100.0 AS cena_pln FROM products WHERE price_cents>(SELECT AVG(price_cents) FROM products);",
+    "columns": [
+      "name",
+      "cena_pln"
+    ],
+    "rows": [
+      [
+        "Kask miejski",
+        159.0
+      ],
+      [
+        "Zapiecie",
+        119.0
+      ],
+      [
+        "Plecak 30L",
+        229.0
+      ],
+      [
+        "Mata turystyczna",
+        129.0
+      ],
+      [
+        "Okulary biegowe",
+        99.0
+      ],
+      [
+        "Walek do masazu",
+        99.0
+      ],
+      [
+        "Rekawice narciarskie",
+        149.0
+      ],
+      [
+        "Ochraniacz plecow",
+        299.0
+      ]
+    ]
+  },
+  {
+    "sql": "WITH customer_spend AS (SELECT c.customer_id,c.name,COALESCE((SELECT SUM(i.quantity*i.unit_price_cents) FROM orders o JOIN order_items i ON i.order_id=o.order_id WHERE o.customer_id=c.customer_id AND o.status IN ('paid','sent')),0) AS cents FROM customers c)\nSELECT name,cents/100.0 AS wydatki_pln FROM customer_spend WHERE cents>(SELECT AVG(cents) FROM customer_spend);",
+    "columns": [
+      "name",
+      "wydatki_pln"
+    ],
+    "rows": [
+      [
+        "Jan Mazur",
+        865.0
+      ],
+      [
+        "Ewa Kruk",
+        907.0
+      ],
+      [
+        "Adam Wilk",
+        1049.0
+      ],
+      [
+        "Ola Kot",
+        751.0
+      ]
+    ]
+  },
+  {
+    "sql": "-- EXISTS sprawdza obecnosc, dlatego nie powiela zamowien.\nSELECT o.order_id FROM orders o WHERE EXISTS(SELECT 1 FROM order_items i JOIN products p ON p.product_id=i.product_id WHERE i.order_id=o.order_id AND p.category_id=2) ORDER BY o.order_id;",
+    "columns": [
+      "order_id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        5
+      ],
+      [
+        8
+      ],
+      [
+        12
+      ],
+      [
+        15
+      ],
+      [
+        16
+      ],
+      [
+        19
+      ],
+      [
+        23
+      ],
+      [
+        25
+      ]
+    ]
+  },
+  {
+    "sql": "-- Wlasne progi: gold od 2000 PLN, silver od 750 PLN, pozostali bronze.\n-- Jawna lista pasm pozwala pokazac takze segment z zerem klientow.\nWITH spending AS (SELECT c.customer_id,COALESCE(SUM(i.quantity*i.unit_price_cents) FILTER(WHERE o.status IN ('paid','sent')),0) AS cents FROM customers c LEFT JOIN orders o ON o.customer_id=c.customer_id LEFT JOIN order_items i ON i.order_id=o.order_id GROUP BY c.customer_id),\nsegments AS (SELECT customer_id,CASE WHEN cents>=200000 THEN 'gold' WHEN cents>=75000 THEN 'silver' ELSE 'bronze' END AS band FROM spending),\nbands(band,position) AS (VALUES('gold',1),('silver',2),('bronze',3))\nSELECT b.band,COUNT(s.customer_id) AS klienci FROM bands b LEFT JOIN segments s ON s.band=b.band GROUP BY b.band,b.position ORDER BY b.position;",
+    "columns": [
+      "band",
+      "klienci"
+    ],
+    "rows": [
+      [
+        "gold",
+        0
+      ],
+      [
+        "silver",
+        4
+      ],
+      [
+        "bronze",
+        6
+      ]
+    ]
+  },
+  {
+    "sql": "-- 6. RANK zachowuje wspolna pozycje przy remisie ceny.\nSELECT category_id,name,price_cents/100.0 AS cena_pln,RANK() OVER(PARTITION BY category_id ORDER BY price_cents DESC) AS miejsce FROM products ORDER BY category_id,miejsce,name;",
+    "columns": [
+      "category_id",
+      "name",
+      "cena_pln",
+      "miejsce"
+    ],
+    "rows": [
+      [
+        1,
+        "Kask miejski",
+        159.0,
+        1
+      ],
+      [
+        1,
+        "Zapiecie",
+        119.0,
+        2
+      ],
+      [
+        1,
+        "Lampka przednia",
+        79.0,
+        3
+      ],
+      [
+        1,
+        "Bidon",
+        35.0,
+        4
+      ],
+      [
+        1,
+        "Dzwonek",
+        25.0,
+        5
+      ],
+      [
+        2,
+        "Plecak 30L",
+        229.0,
+        1
+      ],
+      [
+        2,
+        "Mata turystyczna",
+        129.0,
+        2
+      ],
+      [
+        2,
+        "Latarka",
+        89.0,
+        3
+      ],
+      [
+        2,
+        "Kompas",
+        45.0,
+        4
+      ],
+      [
+        3,
+        "Gogle",
+        69.0,
+        1
+      ],
+      [
+        3,
+        "Deska plywacka",
+        59.0,
+        2
+      ],
+      [
+        3,
+        "Czepek",
+        25.0,
+        3
+      ],
+      [
+        4,
+        "Okulary biegowe",
+        99.0,
+        1
+      ],
+      [
+        4,
+        "Pas biegowy",
+        79.0,
+        2
+      ],
+      [
+        4,
+        "Skarpety sportowe",
+        25.0,
+        3
+      ],
+      [
+        5,
+        "Walek do masazu",
+        99.0,
+        1
+      ],
+      [
+        5,
+        "Pilka treningowa",
+        65.0,
+        2
+      ],
+      [
+        5,
+        "Guma oporowa",
+        35.0,
+        3
+      ],
+      [
+        6,
+        "Ochraniacz plecow",
+        299.0,
+        1
+      ],
+      [
+        6,
+        "Rekawice narciarskie",
+        149.0,
+        2
+      ]
+    ]
+  },
+  {
+    "sql": "WITH positions AS (SELECT product_id,category_id,name,price_cents,ROW_NUMBER() OVER(PARTITION BY category_id ORDER BY price_cents DESC,product_code) AS position FROM products)\nSELECT category_id,name,price_cents/100.0 AS cena_pln FROM positions WHERE position<=2 ORDER BY category_id,position;",
+    "columns": [
+      "category_id",
+      "name",
+      "cena_pln"
+    ],
+    "rows": [
+      [
+        1,
+        "Kask miejski",
+        159.0
+      ],
+      [
+        1,
+        "Zapiecie",
+        119.0
+      ],
+      [
+        2,
+        "Plecak 30L",
+        229.0
+      ],
+      [
+        2,
+        "Mata turystyczna",
+        129.0
+      ],
+      [
+        3,
+        "Gogle",
+        69.0
+      ],
+      [
+        3,
+        "Deska plywacka",
+        59.0
+      ],
+      [
+        4,
+        "Okulary biegowe",
+        99.0
+      ],
+      [
+        4,
+        "Pas biegowy",
+        79.0
+      ],
+      [
+        5,
+        "Walek do masazu",
+        99.0
+      ],
+      [
+        5,
+        "Pilka treningowa",
+        65.0
+      ],
+      [
+        6,
+        "Ochraniacz plecow",
+        299.0
+      ],
+      [
+        6,
+        "Rekawice narciarskie",
+        149.0
+      ]
+    ]
+  },
+  {
+    "sql": "-- Zamowienia wszystkich statusow. Data + ID daje stabilna kolejnosc.\nWITH order_values AS (SELECT o.order_id,o.customer_id,o.order_date,COALESCE(SUM(i.quantity*i.unit_price_cents),0) AS cents FROM orders o LEFT JOIN order_items i ON i.order_id=o.order_id GROUP BY o.order_id)\nSELECT order_id,customer_id,order_date,cents/100.0 AS wartosc_pln,AVG(cents) OVER customer_window/100.0 AS srednia_klienta_pln,LAG(cents) OVER history_window/100.0 AS poprzednia_wartosc_pln FROM order_values\nWINDOW customer_window AS (PARTITION BY customer_id),history_window AS (PARTITION BY customer_id ORDER BY order_date,order_id)\nORDER BY customer_id,order_date,order_id;",
+    "columns": [
+      "order_id",
+      "customer_id",
+      "order_date",
+      "wartosc_pln",
+      "srednia_klienta_pln",
+      "poprzednia_wartosc_pln"
+    ],
+    "rows": [
+      [
+        16,
+        1,
+        "2026-10-06",
+        333.0,
+        308.3333333333333,
+        null
+      ],
+      [
+        8,
+        1,
+        "2026-10-17",
+        446.0,
+        308.3333333333333,
+        333.0
+      ],
+      [
+        24,
+        1,
+        "2026-10-22",
+        146.0,
+        308.3333333333333,
+        446.0
+      ],
+      [
+        3,
+        2,
+        "2026-10-07",
+        230.0,
+        365.0,
+        null
+      ],
+      [
+        19,
+        2,
+        "2026-10-12",
+        593.0,
+        365.0,
+        230.0
+      ],
+      [
+        11,
+        2,
+        "2026-10-23",
+        272.0,
+        365.0,
+        593.0
+      ],
+      [
+        14,
+        3,
+        "2026-10-02",
+        354.0,
+        302.3333333333333,
+        null
+      ],
+      [
+        6,
+        3,
+        "2026-10-13",
+        146.0,
+        302.3333333333333,
+        354.0
+      ],
+      [
+        22,
+        3,
+        "2026-10-18",
+        407.0,
+        302.3333333333333,
+        146.0
+      ],
+      [
+        1,
+        4,
+        "2026-10-03",
+        593.0,
+        494.25,
+        null
+      ],
+      [
+        17,
+        4,
+        "2026-10-08",
+        272.0,
+        494.25,
+        593.0
+      ],
+      [
+        9,
+        4,
+        "2026-10-19",
+        184.0,
+        494.25,
+        272.0
+      ],
+      [
+        25,
+        4,
+        "2026-10-24",
+        928.0,
+        494.25,
+        184.0
+      ],
+      [
+        4,
+        5,
+        "2026-10-09",
+        407.0,
+        390.0,
+        null
+      ],
+      [
+        20,
+        5,
+        "2026-10-14",
+        419.0,
+        390.0,
+        407.0
+      ],
+      [
+        12,
+        5,
+        "2026-10-25",
+        344.0,
+        390.0,
+        419.0
+      ],
+      [
+        15,
+        6,
+        "2026-10-04",
+        690.0,
+        443.0,
+        null
+      ],
+      [
+        7,
+        6,
+        "2026-10-15",
+        435.0,
+        443.0,
+        690.0
+      ],
+      [
+        23,
+        6,
+        "2026-10-20",
+        204.0,
+        443.0,
+        435.0
+      ],
+      [
+        2,
+        7,
+        "2026-10-05",
+        174.0,
+        278.0,
+        null
+      ],
+      [
+        18,
+        7,
+        "2026-10-10",
+        206.0,
+        278.0,
+        174.0
+      ],
+      [
+        10,
+        7,
+        "2026-10-21",
+        454.0,
+        278.0,
+        206.0
+      ],
+      [
+        5,
+        8,
+        "2026-10-11",
+        559.0,
+        381.33333333333337,
+        null
+      ],
+      [
+        21,
+        8,
+        "2026-10-16",
+        230.0,
+        381.33333333333337,
+        559.0
+      ],
+      [
+        13,
+        8,
+        "2026-10-27",
+        355.0,
+        381.33333333333337,
+        230.0
+      ]
+    ]
+  },
+  {
+    "sql": "-- Najpierw jedna suma na dzien, potem suma narastajaca.\nWITH daily AS (SELECT o.order_date,SUM(i.quantity*i.unit_price_cents) AS cents FROM orders o JOIN order_items i ON i.order_id=o.order_id WHERE o.status IN ('paid','sent') GROUP BY o.order_date)\nSELECT order_date,cents/100.0 AS dzien_pln,SUM(cents) OVER(ORDER BY order_date ROWS UNBOUNDED PRECEDING)/100.0 AS narastajaco_pln FROM daily ORDER BY order_date;",
+    "columns": [
+      "order_date",
+      "dzien_pln",
+      "narastajaco_pln"
+    ],
+    "rows": [
+      [
+        "2026-10-02",
+        354.0,
+        354.0
+      ],
+      [
+        "2026-10-03",
+        593.0,
+        947.0
+      ],
+      [
+        "2026-10-05",
+        174.0,
+        1121.0
+      ],
+      [
+        "2026-10-06",
+        333.0,
+        1454.0
+      ],
+      [
+        "2026-10-08",
+        272.0,
+        1726.0
+      ],
+      [
+        "2026-10-09",
+        407.0,
+        2133.0
+      ],
+      [
+        "2026-10-12",
+        593.0,
+        2726.0
+      ],
+      [
+        "2026-10-13",
+        146.0,
+        2872.0
+      ],
+      [
+        "2026-10-15",
+        435.0,
+        3307.0
+      ],
+      [
+        "2026-10-16",
+        230.0,
+        3537.0
+      ],
+      [
+        "2026-10-18",
+        407.0,
+        3944.0
+      ],
+      [
+        "2026-10-19",
+        184.0,
+        4128.0
+      ],
+      [
+        "2026-10-22",
+        146.0,
+        4274.0
+      ],
+      [
+        "2026-10-23",
+        272.0,
+        4546.0
+      ],
+      [
+        "2026-10-25",
+        344.0,
+        4890.0
+      ]
+    ]
+  }
+]

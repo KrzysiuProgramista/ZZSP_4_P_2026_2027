@@ -1,0 +1,56 @@
+[
+  {
+    "trial": 1,
+    "indexed": false,
+    "insert_s": 0.06768910004757345,
+    "lookup_s": 0.0021241546655073763,
+    "plan": [
+      "SCAN sample"
+    ]
+  },
+  {
+    "trial": 1,
+    "indexed": true,
+    "insert_s": 0.10429599997587502,
+    "lookup_s": 4.243533282230298e-05,
+    "plan": [
+      "SEARCH sample USING INDEX code_lookup (product_code=?)"
+    ]
+  },
+  {
+    "trial": 2,
+    "indexed": true,
+    "insert_s": 0.10169659997336566,
+    "lookup_s": 4.0892000931004684e-05,
+    "plan": [
+      "SEARCH sample USING INDEX code_lookup (product_code=?)"
+    ]
+  },
+  {
+    "trial": 2,
+    "indexed": false,
+    "insert_s": 0.06670739990659058,
+    "lookup_s": 0.0021163220005109905,
+    "plan": [
+      "SCAN sample"
+    ]
+  },
+  {
+    "trial": 3,
+    "indexed": false,
+    "insert_s": 0.07198070012964308,
+    "lookup_s": 0.002109096666487555,
+    "plan": [
+      "SCAN sample"
+    ]
+  },
+  {
+    "trial": 3,
+    "indexed": true,
+    "insert_s": 0.10445039998739958,
+    "lookup_s": 4.379199972997109e-05,
+    "plan": [
+      "SEARCH sample USING INDEX code_lookup (product_code=?)"
+    ]
+  }
+]

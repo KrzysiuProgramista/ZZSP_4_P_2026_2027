@@ -1,70 +1,26 @@
-PRAGMA foreign_keys = ON;
-
-CREATE TABLE customers (
-    customer_id INTEGER PRIMARY KEY,
-    name        TEXT NOT NULL,
-    email       TEXT NOT NULL UNIQUE
-);
-
-CREATE TABLE categories (
-    category_id INTEGER PRIMARY KEY,
-    name        TEXT NOT NULL UNIQUE
-);
-
-CREATE TABLE products (
-    product_id   INTEGER PRIMARY KEY,
-    category_id  INTEGER NOT NULL,
-    name         TEXT NOT NULL,
-    product_code TEXT NOT NULL UNIQUE,
-    price        REAL NOT NULL CHECK (price > 0),
-
-    FOREIGN KEY (category_id)
-        REFERENCES categories(category_id)
-        ON DELETE RESTRICT
-);
-
-CREATE TABLE orders (
-    order_id     INTEGER PRIMARY KEY,
-    customer_id  INTEGER NOT NULL,
-    order_date   TEXT NOT NULL DEFAULT (datetime('now')),
-    status       TEXT NOT NULL DEFAULT 'pending'
-                 CHECK (
-                     status IN (
-                         'pending',
-                         'paid',
-                         'shipped',
-                         'delivered',
-                         'cancelled'
-                     )
-                 ),
-
-    FOREIGN KEY (customer_id)
-        REFERENCES customers(customer_id)
-        ON DELETE RESTRICT
-);
-
-CREATE TABLE order_items (
-    order_id   INTEGER NOT NULL,
-    product_id INTEGER NOT NULL,
-    quantity   INTEGER NOT NULL CHECK (quantity > 0),
-    unit_price REAL NOT NULL CHECK (unit_price > 0),
-
-    PRIMARY KEY (order_id, product_id),
-
-    FOREIGN KEY (order_id)
-        REFERENCES orders(order_id)
-        ON DELETE CASCADE,
-
-    FOREIGN KEY (product_id)
-        REFERENCES products(product_id)
-        ON DELETE RESTRICT
-);
-
-CREATE INDEX idx_products_category_id
-    ON products(category_id);
-
-CREATE INDEX idx_orders_customer_id
-    ON orders(customer_id);
-
-CREATE INDEX idx_order_items_product_id
-    ON order_items(product_id);
+PRAGMA foreign_keys=ON;
+-- Model: categories -> products -> order_items <- orders <- customers.
+-- Kwoty przechowujemy w groszach, co pozwala uniknac bledow float.
+CREATE TABLE categories(category_id INTEGER PRIMARY KEY,name TEXT NOT NULL UNIQUE);
+CREATE TABLE customers(customer_id INTEGER PRIMARY KEY,name TEXT NOT NULL,
+ email TEXT NOT NULL COLLATE NOCASE UNIQUE CHECK(instr(email,'@')>1));
+CREATE TABLE products(product_id INTEGER PRIMARY KEY,product_code TEXT NOT NULL UNIQUE,
+ name TEXT NOT NULL,category_id INTEGER NOT NULL REFERENCES categories ON DELETE RESTRICT,
+ price_cents INTEGER NOT NULL CHECK(typeof(price_cents)='integer' AND price_cents>0),
+ stock INTEGER NOT NULL CHECK(typeof(stock)='integer' AND stock>=0));
+CREATE TABLE orders(order_id INTEGER PRIMARY KEY,customer_id INTEGER NOT NULL REFERENCES customers ON DELETE RESTRICT,
+ order_date TEXT NOT NULL CHECK(date(order_date) IS NOT NULL AND date(order_date)=order_date),
+ status TEXT NOT NULL CHECK(status IN ('new','paid','sent','cancelled')));
+CREATE TABLE order_items(order_id INTEGER NOT NULL REFERENCES orders ON DELETE CASCADE,
+ product_id INTEGER NOT NULL REFERENCES products ON DELETE RESTRICT,
+ quantity INTEGER NOT NULL CHECK(typeof(quantity)='integer' AND quantity>0),
+ unit_price_cents INTEGER NOT NULL CHECK(typeof(unit_price_cents)='integer' AND unit_price_cents>0),
+ PRIMARY KEY(order_id,product_id));
+-- Indeks przyspiesza filtrowanie asortymentu kategorii i sortowanie ceny.
+CREATE INDEX ix_catalog ON products(category_id,price_cents,product_id);
+-- Indeks ulatwia historie klienta i kolejnosc jego zamowien.
+CREATE INDEX ix_history ON orders(customer_id,order_date,order_id);
+-- PK pozycji zaczyna sie od order_id, potrzebny jest osobny dostep od produktu.
+CREATE INDEX ix_product_sales ON order_items(product_id,order_id);
+-- RESTRICT chroni historie klientow i produktow. CASCADE usuwa pozycje
+-- tylko razem z naglowkiem zamowienia. Cena w pozycji jest historyczna.

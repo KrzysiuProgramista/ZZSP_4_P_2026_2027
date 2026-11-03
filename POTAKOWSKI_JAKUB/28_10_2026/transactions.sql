@@ -1,0 +1,11 @@
+-- Slajdy 36-37. Wykonywalna implementacja z obsluga bledow: run.py, buy().
+-- Zamowienie, jego pozycje i zmiana zapasu stanowia jedna operacje biznesowa.
+-- Jeden COMMIT zapewnia, ze nie pozostanie samo zamowienie lub zmiana zapasu.
+-- Szkic parametryzowany (parametry przekazuje Python):
+-- BEGIN IMMEDIATE;
+-- INSERT INTO orders(customer_id,order_date,status) VALUES(?,?,'paid');
+-- INSERT INTO order_items VALUES(?,?,?,?);
+-- UPDATE products SET stock=stock-? WHERE product_id=? AND stock>=?;
+-- Po kazdej aktualizacji wymagamy rowcount = 1.
+-- COMMIT po wszystkich pozycjach, ROLLBACK w kazdej sciezce bledu.
+-- Test CHECK ustawia quantity=-1 po rzeczywistej zmianie zapasu.
