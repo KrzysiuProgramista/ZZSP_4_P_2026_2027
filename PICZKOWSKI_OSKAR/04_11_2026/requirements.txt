@@ -1,0 +1,2 @@
+# No third-party dependencies: the project uses only the Python 3 standard library
+# (sqlite3, csv, argparse, ipaddress, unittest). Python 3.10+ recommended.

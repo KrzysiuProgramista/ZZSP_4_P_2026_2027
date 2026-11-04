@@ -1,0 +1,4 @@
+alert_id,rule_code,severity,status,source_ip,target_ip,service_port,window_start,event_count,description
+3,TRAFFIC_FLOOD,CRITICAL,NEW,198.51.100.77,10.0.0.20,443,2026-09-18T10:40:00,160,198.51.100.77 sent 160 events to 10.0.0.20:443 between 2026-09-18T10:40:00 to 2026-09-18T10:41:00 UTC. Rule threshold: 150 events.
+1,PORT_SCAN,HIGH,NEW,198.51.100.66,10.0.0.20,0,2026-09-18T10:10:00,23,198.51.100.66 contacted 23 distinct destination ports on 10.0.0.20 (23 events) between 2026-09-18T10:10:00 to 2026-09-18T10:15:00 UTC. Rule threshold: 20 distinct ports.
+2,BRUTE_FORCE,HIGH,NEW,203.0.113.23,10.0.0.15,22,2026-09-18T10:20:00,10,203.0.113.23 generated 10 AUTH_FAILURE events against 10.0.0.15:22 between 2026-09-18T10:20:00 to 2026-09-18T10:25:00 UTC. Rule threshold: 8 failures.
