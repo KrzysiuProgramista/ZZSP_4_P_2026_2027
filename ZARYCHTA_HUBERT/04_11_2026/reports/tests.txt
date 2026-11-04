@@ -1,0 +1,18 @@
+test_bad_rows_continue (test_analyzer.AnalyzerTests.test_bad_rows_continue) ... ok
+test_below_scan (test_analyzer.AnalyzerTests.test_below_scan) ... ok
+test_brute_force_threshold (test_analyzer.AnalyzerTests.test_brute_force_threshold) ... ok
+test_fixed_boundary (test_analyzer.AnalyzerTests.test_fixed_boundary) ... ok
+test_fk (test_analyzer.AnalyzerTests.test_fk) ... ok
+test_flood_threshold (test_analyzer.AnalyzerTests.test_flood_threshold) ... ok
+test_invalid_header (test_analyzer.AnalyzerTests.test_invalid_header) ... ok
+test_ipv6_blank_ports_timezone (test_analyzer.AnalyzerTests.test_ipv6_blank_ports_timezone) ... ok
+test_reports (test_analyzer.AnalyzerTests.test_reports) ... ok
+test_scan_and_repeat_preserves_status (test_analyzer.AnalyzerTests.test_scan_and_repeat_preserves_status) ... ok
+test_services_separate (test_analyzer.AnalyzerTests.test_services_separate) ... ok
+test_supplied_dataset (test_analyzer.AnalyzerTests.test_supplied_dataset) ... ok
+test_valid_and_repeat (test_analyzer.AnalyzerTests.test_valid_and_repeat) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.062s
+
+OK
