@@ -1,0 +1,15 @@
+test_all_six_sql_reports (test_analyzer.AnalyzerTests.test_all_six_sql_reports) ... ok
+test_below_threshold_does_not_alert (test_analyzer.AnalyzerTests.test_below_threshold_does_not_alert) ... ok
+test_brute_force_rule (test_analyzer.AnalyzerTests.test_brute_force_rule) ... ok
+test_detect_scan_once_and_keep_status (test_analyzer.AnalyzerTests.test_detect_scan_once_and_keep_status) ... ok
+test_foreign_key_constraint (test_analyzer.AnalyzerTests.test_foreign_key_constraint) ... ok
+test_invalid_protocol_port_and_bytes (test_analyzer.AnalyzerTests.test_invalid_protocol_port_and_bytes) ... ok
+test_rejected_row_has_csv_line_number (test_analyzer.AnalyzerTests.test_rejected_row_has_csv_line_number) ... ok
+test_traffic_flood_rule (test_analyzer.AnalyzerTests.test_traffic_flood_rule) ... ok
+test_unknown_type_is_rejected_with_no_orphan (test_analyzer.AnalyzerTests.test_unknown_type_is_rejected_with_no_orphan) ... ok
+test_valid_csv_and_duplicate_import (test_analyzer.AnalyzerTests.test_valid_csv_and_duplicate_import) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.040s
+
+OK

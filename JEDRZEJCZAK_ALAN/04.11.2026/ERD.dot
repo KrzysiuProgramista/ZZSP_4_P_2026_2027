@@ -1,0 +1,19 @@
+digraph ERD {
+    graph [rankdir=LR, bgcolor="white", pad="0.3", nodesep="0.6", ranksep="1.25", splines=polyline, fontname="Arial"];
+    node [shape=record, style="rounded,filled", fillcolor="#F6F8FC", color="#8193A8", penwidth=1.4, fontname="Arial", fontsize=10, margin="0.15,0.10"];
+    edge [color="#5B718A", penwidth=1.4, arrowsize=0.7, fontname="Arial", fontsize=9];
+    sensors [label="{sensors|PK sensor_id\lname (UNIQUE)\llocation\l}",fillcolor="#E5F3FF"];
+    ip_addresses [label="{ip_addresses|PK ip_id\laddress (UNIQUE)\lis_private\l}",fillcolor="#E5F3FF"];
+    event_types [label="{event_types|PK event_type_id\lcode (UNIQUE)\ldefault_severity\l}",fillcolor="#E5F3FF"];
+    network_events [label="{network_events|PK event_id\levent_hash (UNIQUE)\lFK sensor_id\lFK event_type_id\lFK src_ip_id\lFK dst_ip_id\levent_time, ports\lprotocol, bytes, action...\l}",fillcolor="#E8FBF5"];
+    alerts [label="{alerts|PK alert_id\lFK source_ip_id\lFK target_ip_id\lrule_code, severity, status\lwindow_start, window_end\levent_count, metric_count\l}",fillcolor="#FFF2D8"];
+    alert_events [label="{alert_events|PK/FK alert_id\lPK/FK event_id\l}",fillcolor="#F3E9FF"];
+    import_rejections [label="{import_rejections|PK rejection_id\lfilename\lline_number, reason\lraw_row\l}",fillcolor="#FFEEF0"];
+    sensors -> network_events [label="1 : N"];
+    event_types -> network_events [label="1 : N"];
+    ip_addresses -> network_events [label="source / destination"];
+    ip_addresses -> alerts [label="source / target"];
+    network_events -> alert_events [label="1 : N"];
+    alerts -> alert_events [label="1 : N"];
+    {rank=same; sensors; event_types; ip_addresses; import_rejections;}
+}

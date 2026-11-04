@@ -1,0 +1,150 @@
+$ python main.py init-db
+Initialized SQLite database: /mnt/data/network-analyzer/network_events.db
+
+$ python main.py import-csv data/network_events_sample.csv
+Import summary: read=896 / imported=896 / rejected=0 / duplicates=0
+
+$ python main.py summary
+DATABASE SUMMARY
+  events: 896
+  sensors: 2
+  IP addresses: 13
+  alerts: 0
+  logged rejected rows: 0
+
+Most common event types:
+event_type    event_count
+------------  -----------
+HTTP_REQUEST  326        
+CONNECTION    196        
+DNS_QUERY     187        
+AUTH_SUCCESS  177        
+AUTH_FAILURE  10         
+
+$ python main.py detect
+Detection complete: new=3 / existing=0
+  PORT_SCAN: 1 matched window(s)
+  BRUTE_FORCE: 1 matched window(s)
+  TRAFFIC_FLOOD: 1 matched window(s)
+
+$ python main.py alerts
+alert_id  rule_code      source_ip      target_ip  dst_port  window_start         window_end           event_count  metric_count  severity  status
+--------  -------------  -------------  ---------  --------  -------------------  -------------------  -----------  ------------  --------  ------
+1         PORT_SCAN      198.51.100.66  10.0.0.20            2026-09-18T10:10:00  2026-09-18T10:15:00  23           23            HIGH      NEW   
+2         BRUTE_FORCE    203.0.113.23   10.0.0.15  22        2026-09-18T10:20:00  2026-09-18T10:25:00  10           10            HIGH      NEW   
+3         TRAFFIC_FLOOD  198.51.100.77  10.0.0.20  443       2026-09-18T10:40:00  2026-09-18T10:41:00  160          160           CRITICAL  NEW   
+
+$ python main.py explain-alert 1
+ALERT #1 - PORT_SCAN (HIGH)
+  rule_code: PORT_SCAN
+  source_ip: 198.51.100.66
+  target_ip: 10.0.0.20
+  dst_port: None
+  window_start: 2026-09-18T10:10:00
+  window_end: 2026-09-18T10:15:00
+  event_count: 23
+  metric_count: 23
+  severity: HIGH
+  status: NEW
+  description: PORT_SCAN: 198.51.100.66 -> 10.0.0.20; 23 distinct destination ports in UTC window [2026-09-18T10:10:00, 2026-09-18T10:15:00); inspect evidence before conclusions.
+  stored evidence: 23 events (first 10 shown)
+event_id  event_time           event_type  dst_port  action
+--------  -------------------  ----------  --------  ------
+141       2026-09-18T10:12:00  CONNECTION  222       BLOCK 
+142       2026-09-18T10:12:08  CONNECTION  530       BLOCK 
+145       2026-09-18T10:12:16  CONNECTION  236       BLOCK 
+146       2026-09-18T10:12:24  CONNECTION  420       BLOCK 
+148       2026-09-18T10:12:32  CONNECTION  118       BLOCK 
+151       2026-09-18T10:12:40  CONNECTION  783       BLOCK 
+155       2026-09-18T10:12:48  CONNECTION  1012      BLOCK 
+159       2026-09-18T10:12:56  CONNECTION  324       BLOCK 
+162       2026-09-18T10:13:04  CONNECTION  129       BLOCK 
+165       2026-09-18T10:13:12  CONNECTION  481       BLOCK 
+
+$ python main.py report
+=== Event volume by type ===
+event_type    event_count
+------------  -----------
+HTTP_REQUEST  326        
+CONNECTION    196        
+DNS_QUERY     187        
+AUTH_SUCCESS  177        
+AUTH_FAILURE  10         
+
+=== Top 10 source IPs ===
+source_ip      event_count  last_seen_utc      
+-------------  -----------  -------------------
+198.51.100.77  160          2026-09-18T10:40:58
+10.0.0.20      92           2026-09-18T10:59:56
+203.0.113.18   76           2026-09-18T10:59:54
+10.0.0.15      74           2026-09-18T10:59:38
+203.0.113.60   74           2026-09-18T10:59:33
+192.0.2.44     70           2026-09-18T10:59:55
+10.0.1.10      67           2026-09-18T10:58:39
+10.0.0.14      65           2026-09-18T10:59:35
+198.51.100.8   64           2026-09-18T10:59:49
+198.51.100.90  63           2026-09-18T10:59:51
+
+=== Top targeted destination ports ===
+destination_port  protocol  event_count
+----------------  --------  -----------
+443               TCP       241        
+3389              TCP       101        
+8080              TCP       82         
+123               TCP       81         
+22                TCP       80         
+80                TCP       75         
+53                TCP       71         
+53                UDP       22         
+8080              UDP       21         
+80                UDP       19         
+443               UDP       19         
+22                UDP       18         
+3389              UDP       12         
+123               UDP       8          
+22                ICMP      6          
+
+=== Alerts overview by severity and status ===
+severity  status  alert_count
+--------  ------  -----------
+CRITICAL  NEW     1          
+HIGH      NEW     2          
+
+=== 5-minute UTC timeline ===
+bucket_start_utc     event_count
+-------------------  -----------
+2026-09-18T10:00:00  62         
+2026-09-18T10:05:00  60         
+2026-09-18T10:10:00  73         
+2026-09-18T10:15:00  67         
+2026-09-18T10:20:00  55         
+2026-09-18T10:25:00  71         
+2026-09-18T10:30:00  62         
+2026-09-18T10:35:00  46         
+2026-09-18T10:40:00  218        
+2026-09-18T10:45:00  55         
+2026-09-18T10:50:00  64         
+2026-09-18T10:55:00  63         
+
+=== Top destination IPs ===
+target_ip      event_count
+-------------  -----------
+10.0.0.20      283        
+10.0.0.25      126        
+10.0.0.15      105        
+10.0.1.10      105        
+10.0.0.14      100        
+198.51.100.90  41         
+203.0.113.60   40         
+192.0.2.44     38         
+198.51.100.8   33         
+203.0.113.18   25         
+
+$ python main.py detect [repeat]
+Detection complete: new=0 / existing=3
+  PORT_SCAN: 1 matched window(s)
+  BRUTE_FORCE: 1 matched window(s)
+  TRAFFIC_FLOOD: 1 matched window(s)
+
+$ python main.py import-csv data/network_events_sample.csv [repeat]
+Import summary: read=896 / imported=0 / rejected=0 / duplicates=896
