@@ -1,8 +1,8 @@
 {
-  "generated": "56b178841d1e35dade667de703c6defdf695719a",
+  "generated": "adab3b55039512402669efbb47c8564a365f7bda",
   "minChars": 100,
   "threshold": 0.6,
-  "fileCount": 187,
+  "fileCount": 227,
   "pupilCount": 16,
   "skipped": [
     {
@@ -11,9 +11,19 @@
       "chars": 0
     },
     {
+      "path": "JEDRZEJCZAK_ALAN/04.11.2026/main.py",
+      "pupil": "JEDRZEJCZAK_ALAN",
+      "chars": 73
+    },
+    {
       "path": "JEDRZEJCZAK_ALAN/21_10_2026/plugin_loader_homework/tests/__init__.py",
       "pupil": "JEDRZEJCZAK_ALAN",
       "chars": 0
+    },
+    {
+      "path": "PICZKOWSKI_OSKAR/04_11_2026/main.py",
+      "pupil": "PICZKOWSKI_OSKAR",
+      "chars": 80
     },
     {
       "path": "PICZKOWSKI_OSKAR/09_09_2026/tests/__init__.py",
@@ -31,6 +41,11 @@
       "chars": 3
     },
     {
+      "path": "POTAKOWSKI_JAKUB/04_11_2026/sentinel/__init__.py",
+      "pupil": "POTAKOWSKI_JAKUB",
+      "chars": 3
+    },
+    {
       "path": "WASIK_PIOTR/09_09_2026/app/__init__.py",
       "pupil": "WASIK_PIOTR",
       "chars": 0
@@ -39,6 +54,11 @@
       "path": "WASIK_PIOTR/09_09_2026/tests/__init__.py",
       "pupil": "WASIK_PIOTR",
       "chars": 0
+    },
+    {
+      "path": "ZARYCHTA_HUBERT/04_11_2026/main.py",
+      "pupil": "ZARYCHTA_HUBERT",
+      "chars": 71
     },
     {
       "path": "ZARYCHTA_HUBERT/09_09_2026/expenses/__init__.py",
