@@ -1,0 +1,5 @@
+{
+  "PORT_SCAN": {"seconds": 300, "threshold": 20, "severity": "HIGH"},
+  "BRUTE_FORCE": {"seconds": 300, "threshold": 8, "severity": "HIGH"},
+  "TRAFFIC_FLOOD": {"seconds": 60, "threshold": 150, "severity": "CRITICAL"}
+}

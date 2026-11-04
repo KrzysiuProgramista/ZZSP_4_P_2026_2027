@@ -1,0 +1,20 @@
+test_all_reports (test_system.SystemTests.test_all_reports) ... ok
+test_bad_header (test_system.SystemTests.test_bad_header) ... ok
+test_duplicate_anchor_not_multiplied (test_system.SystemTests.test_duplicate_anchor_not_multiplied) ... ok
+test_exact_window_end_excluded (test_system.SystemTests.test_exact_window_end_excluded) ... ok
+test_flood_threshold (test_system.SystemTests.test_flood_threshold) ... ok
+test_import_and_duplicate (test_system.SystemTests.test_import_and_duplicate) ... ok
+test_import_transaction_rollback (test_system.SystemTests.test_import_transaction_rollback) ... ok
+test_invalid_settings (test_system.SystemTests.test_invalid_settings) ... ok
+test_ipv6_null_and_timezone (test_system.SystemTests.test_ipv6_null_and_timezone) ... ok
+test_original_and_idempotent_detection (test_system.SystemTests.test_original_and_idempotent_detection) ... ok
+test_orphans_prevented (test_system.SystemTests.test_orphans_prevented) ... ok
+test_rejected_rows (test_system.SystemTests.test_rejected_rows) ... ok
+test_rolling_across_fixed_boundary (test_system.SystemTests.test_rolling_across_fixed_boundary) ... ok
+test_service_separation (test_system.SystemTests.test_service_separation) ... ok
+test_sqlite_integer_overflow_rejected (test_system.SystemTests.test_sqlite_integer_overflow_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.078s
+
+OK
