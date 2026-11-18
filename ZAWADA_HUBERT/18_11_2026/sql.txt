@@ -1,0 +1,97 @@
+DROP VIEW IF EXISTS source_activity_report;
+
+CREATE VIEW source_activity_report AS
+WITH filtered_events AS (
+    SELECT
+        event_id,
+        timestamp,
+        src_ip,
+        dst_port,
+        event_type,
+        action
+    FROM network_events
+    WHERE timestamp >= '2026-09-18T10:00:00'
+      AND timestamp <= '2026-09-18T10:59:59'
+),
+
+summarised_sources AS (
+    SELECT
+        src_ip,
+        COUNT(*) AS total_events,
+        SUM(CASE WHEN event_type = 'AUTH_FAILURE' THEN 1 ELSE 0 END) AS auth_failure_count,
+        SUM(CASE WHEN action = 'BLOCK' THEN 1 ELSE 0 END) AS block_count,
+        COUNT(DISTINCT dst_port) AS distinct_dst_ports
+    FROM filtered_events
+    GROUP BY src_ip
+)
+
+SELECT
+    src_ip,
+    total_events,
+    auth_failure_count,
+    block_count,
+    distinct_dst_ports,
+    CASE
+        WHEN auth_failure_count >= 5
+          OR block_count >= 15
+          OR distinct_dst_ports >= 15
+            THEN 'INVESTIGATE'
+
+        WHEN auth_failure_count >= 1
+          OR block_count >= 8
+            THEN 'WATCH'
+
+        ELSE 'NORMAL'
+    END AS risk_classification
+FROM summarised_sources;
+
+
+SELECT *
+FROM source_activity_report
+ORDER BY
+    CASE risk_classification
+        WHEN 'INVESTIGATE' THEN 1
+        WHEN 'WATCH' THEN 2
+        ELSE 3
+    END,
+    total_events DESC;
+
+
+WITH allowlist AS (
+    SELECT '10.0.0.14' AS src_ip
+    UNION ALL
+    SELECT '10.0.0.15'
+    UNION ALL
+    SELECT '10.0.0.20'
+)
+
+SELECT src_ip
+FROM source_activity_report
+WHERE risk_classification IN ('WATCH', 'INVESTIGATE')
+
+EXCEPT
+
+SELECT src_ip
+FROM allowlist
+
+ORDER BY src_ip;
+
+
+WITH allowlist AS (
+    SELECT '10.0.0.14' AS src_ip
+    UNION ALL
+    SELECT '10.0.0.15'
+    UNION ALL
+    SELECT '10.0.0.20'
+)
+
+SELECT src_ip
+FROM source_activity_report
+WHERE risk_classification IN ('WATCH', 'INVESTIGATE')
+
+INTERSECT
+
+SELECT src_ip
+FROM allowlist
+
+ORDER BY src_ip;
