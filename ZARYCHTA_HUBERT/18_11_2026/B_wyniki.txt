@@ -1,0 +1,99 @@
+SQLite 3.53.1
+
+Kopia bazy startowej (CSV już zaimportowany)
+Import 1: przed=896, dodano=0, po=896
+Import 2: przed=896, dodano=0, po=896
+
+Druga kopia (wyczyszczono wyłącznie network_events)
+Import 1: przed=0, dodano=896, po=896
+Import 2: przed=896, dodano=0, po=896
+
+Schemat, audyt i plany zapytań na kopii bazy startowej
+type | name | tbl_name | sql
+index | idx_alert_history_alert_time | alert_status_history | CREATE INDEX idx_alert_history_alert_time
+    ON alert_status_history(alert_id, changed_at)
+index | idx_events_src_time | network_events | CREATE INDEX idx_events_src_time
+    ON network_events(src_ip, timestamp)
+index | idx_events_type_time | network_events | CREATE INDEX idx_events_type_time
+    ON network_events(event_type, timestamp)
+index | sqlite_autoindex_alerts_1 | alerts | None
+index | sqlite_autoindex_event_statistics_1 | event_statistics | None
+index | sqlite_autoindex_network_events_1 | network_events | None
+index | sqlite_autoindex_sensors_1 | sensors | None
+table | alert_status_history | alert_status_history | CREATE TABLE alert_status_history (
+    history_id INTEGER PRIMARY KEY,
+    alert_id   INTEGER NOT NULL REFERENCES alerts(alert_id) ON DELETE RESTRICT,
+    old_status TEXT NOT NULL,
+    new_status TEXT NOT NULL,
+    changed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+)
+table | alerts | alerts | CREATE TABLE alerts (
+    alert_id   INTEGER PRIMARY KEY,
+    source_ip  TEXT NOT NULL,
+    rule_name  TEXT NOT NULL,
+    status     TEXT NOT NULL CHECK(status IN ('OPEN','INVESTIGATING','CLOSED','FALSE_POSITIVE')),
+    first_seen TEXT NOT NULL,
+    last_seen  TEXT NOT NULL,
+    event_count INTEGER NOT NULL CHECK(event_count > 0),
+    UNIQUE(source_ip, rule_name, first_seen)
+)
+table | event_statistics | event_statistics | CREATE TABLE event_statistics (
+    source_ip   TEXT PRIMARY KEY,
+    event_count INTEGER NOT NULL CHECK(event_count >= 0),
+    last_seen   TEXT NOT NULL
+)
+table | network_events | network_events | CREATE TABLE network_events (
+    event_id    INTEGER PRIMARY KEY,
+    event_key   TEXT NOT NULL UNIQUE,
+    timestamp   TEXT NOT NULL,
+    sensor_id   INTEGER NOT NULL REFERENCES sensors(sensor_id) ON DELETE RESTRICT,
+    src_ip      TEXT NOT NULL,
+    dst_ip      TEXT NOT NULL,
+    src_port    INTEGER CHECK(src_port BETWEEN 1 AND 65535),
+    dst_port    INTEGER NOT NULL CHECK(dst_port BETWEEN 1 AND 65535),
+    protocol    TEXT NOT NULL CHECK(protocol IN ('TCP', 'UDP', 'ICMP')),
+    event_type  TEXT NOT NULL,
+    action      TEXT NOT NULL CHECK(action IN ('ALLOW', 'BLOCK')),
+    bytes       INTEGER NOT NULL DEFAULT 0 CHECK(bytes >= 0),
+    duration_ms INTEGER NOT NULL DEFAULT 0 CHECK(duration_ms >= 0)
+)
+table | sensors | sensors | CREATE TABLE sensors (
+    sensor_id   INTEGER PRIMARY KEY,
+    sensor_name TEXT NOT NULL UNIQUE,
+    location    TEXT NOT NULL DEFAULT 'unknown'
+)
+trigger | log_alert_status_change | alerts | CREATE TRIGGER log_alert_status_change
+AFTER UPDATE OF status ON alerts
+FOR EACH ROW
+WHEN OLD.status <> NEW.status
+BEGIN
+    INSERT INTO alert_status_history (alert_id, old_status, new_status)
+    VALUES (NEW.alert_id, OLD.status, NEW.status);
+END
+
+alert_id | status
+1 | OPEN
+
+history_before
+0
+
+alert_id | status
+1 | INVESTIGATING
+
+alert_id | old_status | new_status | changed_at
+1 | OPEN | INVESTIGATING | 2026-11-18 15:37:54
+
+alert_id | status
+1 | OPEN
+
+history_after
+0
+
+id | parent | notused | detail
+3 | 0 | 216 | SCAN network_events
+14 | 0 | 0 | USE TEMP B-TREE FOR ORDER BY
+
+id | parent | notused | detail
+4 | 0 | 51 | SEARCH network_events USING INDEX idx_events_src_time (src_ip=? AND timestamp>?)
+
+OK: import, zgodność kluczy, audyt, rollback, indeks i integralność.
