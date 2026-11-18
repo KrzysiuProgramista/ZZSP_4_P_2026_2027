@@ -1,0 +1,54 @@
+1) SCHEMA INSPECTION (existing objects; nothing recreated)
+- index: idx_alert_history_alert_time
+- index: idx_events_src_time
+- index: idx_events_type_time
+- table: alert_status_history
+- table: alerts
+- table: event_statistics
+- table: network_events
+- table: sensors
+- trigger: log_alert_status_change
+  SQL: CREATE TRIGGER log_alert_status_change AFTER UPDATE OF status ON alerts FOR EACH ROW WHEN OLD.status <> NEW.status BEGIN INSERT INTO alert_status_history (alert_id, old_status, new_status) VALUES (NEW.alert_id, OLD.status, NEW.status); END
+- view: suspicious_sources
+network_events columns:
+  event_id INTEGER | notnull=0 | pk=1
+  event_key TEXT | notnull=1 | pk=0
+  timestamp TEXT | notnull=1 | pk=0
+  sensor_id INTEGER | notnull=1 | pk=0
+  src_ip TEXT | notnull=1 | pk=0
+  dst_ip TEXT | notnull=1 | pk=0
+  src_port INTEGER | notnull=0 | pk=0
+  dst_port INTEGER | notnull=1 | pk=0
+  protocol TEXT | notnull=1 | pk=0
+  event_type TEXT | notnull=1 | pk=0
+  action TEXT | notnull=1 | pk=0
+  bytes INTEGER | notnull=1 | pk=0
+  duration_ms INTEGER | notnull=1 | pk=0
+network_events indexes:
+  idx_events_type_time (unique=0)
+  idx_events_src_time (unique=0)
+  sqlite_autoindex_network_events_1 (unique=1)
+Foreign keys:
+  (0, 0, 'sensors', 'sensor_id', 'sensor_id', 'NO ACTION', 'RESTRICT', 'NONE')
+
+2) IDEMPOTENT IMPORT (executemany + ON CONFLICT(event_key) DO NOTHING)
+CSV rows in batch: 896
+Rows before import: 896
+Rows after first run: 896
+Rows after second run: 896
+Second run added: 0
+
+3) AUDIT TRIGGER TEST (transaction is rolled back)
+Alert 1 status before: OPEN
+Trigger-created history row inside transaction: (1, 1, 'OPEN', 'INVESTIGATING', '2026-11-18 15:50:00')
+Alert 1 status after ROLLBACK: OPEN
+History rows after ROLLBACK: 0
+
+4) QUERY PLAN COMPARISON ON A DATABASE COPY
+Before idx_events_src_time:
+  3 | 0 | 0 | SCAN network_events
+After idx_events_src_time:
+  3 | 0 | 0 | SEARCH network_events USING COVERING INDEX idx_events_src_time (src_ip=? AND timestamp>? AND timestamp<?)
+Optimization copy: network_security_optimization_copy.db
+
+Saved captured output to: /mnt/data/challenge_b/challenge_b_output.txt
