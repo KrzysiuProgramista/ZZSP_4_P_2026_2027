@@ -1,0 +1,145 @@
+CHALLENGE B: MAKE INGESTION SAFE AND AUDITABLE
+Captured Test Outputs & Design Documentation
+========================================================================
+
+1. CAPTURED EXECUTION OUTPUT (python3 challenge_b.py)
+------------------------------------------------------------------------
+========================================================================
+STEP 1: INSPECT sqlite_schema (Tables, Indexes, Triggers, Views)
+========================================================================
+[INDEX] idx_alert_history_alert_time (on alert_status_history)
+    CREATE INDEX idx_alert_history_alert_time
+        ON alert_status_history(alert_id, changed_at)
+[INDEX] idx_events_src_time (on network_events)
+    CREATE INDEX idx_events_src_time
+        ON network_events(src_ip, timestamp)
+[INDEX] idx_events_type_time (on network_events)
+    CREATE INDEX idx_events_type_time
+        ON network_events(event_type, timestamp)
+[INDEX] sqlite_autoindex_alerts_1 (on alerts)
+[INDEX] sqlite_autoindex_event_statistics_1 (on event_statistics)
+[INDEX] sqlite_autoindex_network_events_1 (on network_events)
+[INDEX] sqlite_autoindex_sensors_1 (on sensors)
+[TABLE] alert_status_history (on alert_status_history)
+    CREATE TABLE alert_status_history (
+        history_id INTEGER PRIMARY KEY,
+        alert_id   INTEGER NOT NULL REFERENCES alerts(alert_id) ON DELETE RESTRICT,
+        old_status TEXT NOT NULL,
+        new_status TEXT NOT NULL,
+        changed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+[TABLE] alerts (on alerts)
+    CREATE TABLE alerts (
+        alert_id   INTEGER PRIMARY KEY,
+        source_ip  TEXT NOT NULL,
+        rule_name  TEXT NOT NULL,
+        status     TEXT NOT NULL CHECK(status IN ('OPEN','INVESTIGATING','CLOSED','FALSE_POSITIVE')),
+        first_seen TEXT NOT NULL,
+        last_seen  TEXT NOT NULL,
+        event_count INTEGER NOT NULL CHECK(event_count > 0),
+        UNIQUE(source_ip, rule_name, first_seen)
+    )
+[TABLE] event_statistics (on event_statistics)
+    CREATE TABLE event_statistics (
+        source_ip   TEXT PRIMARY KEY,
+        event_count INTEGER NOT NULL CHECK(event_count >= 0),
+        last_seen   TEXT NOT NULL
+    )
+[TABLE] network_events (on network_events)
+    CREATE TABLE network_events (
+        event_id    INTEGER PRIMARY KEY,
+        event_key   TEXT NOT NULL UNIQUE,
+        timestamp   TEXT NOT NULL,
+        sensor_id   INTEGER NOT NULL REFERENCES sensors(sensor_id) ON DELETE RESTRICT,
+        src_ip      TEXT NOT NULL,
+        dst_ip      TEXT NOT NULL,
+        src_port    INTEGER CHECK(src_port BETWEEN 1 AND 65535),
+        dst_port    INTEGER NOT NULL CHECK(dst_port BETWEEN 1 AND 65535),
+        protocol    TEXT NOT NULL CHECK(protocol IN ('TCP', 'UDP', 'ICMP')),
+        event_type  TEXT NOT NULL,
+        action      TEXT NOT NULL CHECK(action IN ('ALLOW', 'BLOCK')),
+        bytes       INTEGER NOT NULL DEFAULT 0 CHECK(bytes >= 0),
+        duration_ms INTEGER NOT NULL DEFAULT 0 CHECK(duration_ms >= 0)
+    )
+[TABLE] sensors (on sensors)
+    CREATE TABLE sensors (
+        sensor_id   INTEGER PRIMARY KEY,
+        sensor_name TEXT NOT NULL UNIQUE,
+        location    TEXT NOT NULL DEFAULT 'unknown'
+    )
+[TRIGGER] log_alert_status_change (on alerts)
+    CREATE TRIGGER log_alert_status_change
+    AFTER UPDATE OF status ON alerts
+    FOR EACH ROW
+    WHEN OLD.status <> NEW.status
+    BEGIN
+        INSERT INTO alert_status_history (alert_id, old_status, new_status)
+        VALUES (NEW.alert_id, OLD.status, NEW.status);
+    END
+[VIEW] suspicious_sources (on suspicious_sources)
+    CREATE VIEW suspicious_sources AS
+    SELECT src_ip, COUNT(*) AS failed_logins, MIN(timestamp) AS first_failure,
+           MAX(timestamp) AS last_failure
+    FROM network_events
+    WHERE event_type='AUTH_FAILURE'
+    GROUP BY src_ip HAVING COUNT(*) >= 5
+
+========================================================================
+STEP 2 & 3: SAFE IDEMPOTENT IMPORT (12-column executemany + ON CONFLICT)
+========================================================================
+Initial network_events row count: 896
+Loaded 896 rows from network_events_sample.csv
+Run 1 -> rowcount reported: 0, table count: 896
+Run 2 -> rowcount reported: 0, table count: 896
+PASS: Row count did not increase on the second run (idempotency verified).
+
+========================================================================
+STEP 4: AUDIT TRIGGER INSIDE TRANSACTION + ROLLBACK
+========================================================================
+Before transaction -> Alert 1: (1, '198.51.100.66', 'PORT_SCAN', 'OPEN'), history count: 0
+Inside transaction -> Alert 1: (1, '198.51.100.66', 'PORT_SCAN', 'INVESTIGATING')
+Inside transaction -> Trigger audit row(s): [(1, 1, 'OPEN', 'INVESTIGATING', '2026-11-18 15:48:00')]
+After ROLLBACK     -> Alert 1: (1, '198.51.100.66', 'PORT_SCAN', 'OPEN'), history count: 0
+PASS: Trigger fired atomically inside transaction and rolled back cleanly.
+
+========================================================================
+STEP 5: OPTIMISE (EXPLAIN QUERY PLAN BEFORE & AFTER idx_events_src_time)
+========================================================================
+BEFORE idx_events_src_time (dropped on DB copy):
+    detail=SCAN network_events
+    detail=USE TEMP B-TREE FOR ORDER BY
+AFTER idx_events_src_time (created on DB copy):
+    detail=SEARCH network_events USING INDEX idx_events_src_time (src_ip=? AND timestamp>? AND timestamp<?)
+PASS: Composite index eliminated full table scan and temporary B-tree sort.
+
+ALL CHALLENGE B CHECKS PASSED SUCCESSFULLY.
+
+========================================================================
+2. DESIGN DOCUMENTATION (Conflict Key, Transaction Boundary, Index Choice)
+========================================================================
+A. Conflict Key Choice (`event_key`):
+   - `network_events` defines `event_key TEXT NOT NULL UNIQUE`, storing a deterministic
+     SHA-256 hash of all 11 CSV fields joined with `|` (`timestamp|sensor_name|src_ip|
+     dst_ip|src_port|dst_port|protocol|event_type|action|bytes|duration_ms`).
+   - Unlike surrogate `event_id` or non-unique pairs like `(src_ip, timestamp)` (multiple
+     events can share the same second and source IP), `event_key` uniquely identifies
+     the exact event payload.
+   - `ON CONFLICT(event_key) DO NOTHING` with `executemany()` makes batch ingestion
+     fully idempotent: new rows are inserted while duplicate rows in retried batches are
+     ignored without throwing `IntegrityError` or duplicating records.
+
+B. Transaction Boundary (`BEGIN TRANSACTION` ... `ROLLBACK` / `COMMIT`):
+   - In SQLite, triggers (`log_alert_status_change`) run inside the same transaction as
+     the statement that fired them (`UPDATE alerts`).
+   - Wrapping the status update in an explicit transaction guarantees atomicity between
+     `alerts` and `alert_status_history`: either both commit together, or `ROLLBACK`
+     reverts both the status update and the audit record written by the trigger.
+
+C. Index Choice (`idx_events_src_time` on `network_events(src_ip, timestamp)`):
+   - Incident investigation queries filter by `src_ip = ?` over a time range
+     (`timestamp BETWEEN ? AND ?`) and sort by `timestamp`.
+   - Without `idx_events_src_time`, SQLite performs a full table `SCAN` plus an external
+     sort (`USE TEMP B-TREE FOR ORDER BY`).
+   - With the composite B-tree index `(src_ip, timestamp)`, SQLite performs an index
+     range `SEARCH` and reads rows already sorted by `timestamp`, avoiding both the
+     full scan and the temporary B-tree sort.
