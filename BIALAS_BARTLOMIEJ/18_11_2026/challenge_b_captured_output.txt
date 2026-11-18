@@ -1,0 +1,28 @@
+=== IMPORT / IDEMPOTENCY ===
+CSV rows validated:                 896
+Rows before first import:           0
+Rows after first import:             896
+Rows inserted on first import:      896
+Rows after second import:            896
+Rows inserted on second import:     0
+IDEMPOTENCY TEST:                  PASS
+
+=== AUDIT TRIGGER / ROLLBACK ===
+Status before transaction:           OPEN
+Trigger history inside transaction:  [(1, 'OPEN', 'INVESTIGATING')]
+Status after ROLLBACK:                OPEN
+History rows after ROLLBACK:          0
+AUDIT / ROLLBACK TEST:              PASS
+
+=== QUERY PLAN / COMPOSITE INDEX ===
+Before index:
+  SCAN network_events
+  USE TEMP B-TREE FOR ORDER BY
+After index:
+  SEARCH network_events USING INDEX idx_events_src_time (src_ip=? AND timestamp>?)
+QUERY PLAN TEST:                    PASS
+
+=== FINAL CHECKS ===
+Foreign-key check:                  OK
+Unique event keys:                  896
+OVERALL:                            ALL TESTS PASSED
