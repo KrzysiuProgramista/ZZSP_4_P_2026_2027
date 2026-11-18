@@ -1,0 +1,109 @@
+SQLite 3.53.1 | baza źródłowa: network_security.db
+
+=== 1. SCHEMAT Z SQLITE_SCHEMA ===
+index idx_alert_history_alert_time (tabela lub widok: alert_status_history)
+CREATE INDEX idx_alert_history_alert_time
+    ON alert_status_history(alert_id, changed_at)
+index idx_events_src_time (tabela lub widok: network_events)
+CREATE INDEX idx_events_src_time
+    ON network_events(src_ip, timestamp)
+index idx_events_type_time (tabela lub widok: network_events)
+CREATE INDEX idx_events_type_time
+    ON network_events(event_type, timestamp)
+index sqlite_autoindex_alerts_1 (tabela lub widok: alerts)
+Indeks automatyczny utworzony przez SQLite.
+index sqlite_autoindex_event_statistics_1 (tabela lub widok: event_statistics)
+Indeks automatyczny utworzony przez SQLite.
+index sqlite_autoindex_network_events_1 (tabela lub widok: network_events)
+Indeks automatyczny utworzony przez SQLite.
+index sqlite_autoindex_sensors_1 (tabela lub widok: sensors)
+Indeks automatyczny utworzony przez SQLite.
+table alert_status_history (tabela lub widok: alert_status_history)
+CREATE TABLE alert_status_history (
+    history_id INTEGER PRIMARY KEY,
+    alert_id   INTEGER NOT NULL REFERENCES alerts(alert_id) ON DELETE RESTRICT,
+    old_status TEXT NOT NULL,
+    new_status TEXT NOT NULL,
+    changed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+)
+table alerts (tabela lub widok: alerts)
+CREATE TABLE alerts (
+    alert_id   INTEGER PRIMARY KEY,
+    source_ip  TEXT NOT NULL,
+    rule_name  TEXT NOT NULL,
+    status     TEXT NOT NULL CHECK(status IN ('OPEN','INVESTIGATING','CLOSED','FALSE_POSITIVE')),
+    first_seen TEXT NOT NULL,
+    last_seen  TEXT NOT NULL,
+    event_count INTEGER NOT NULL CHECK(event_count > 0),
+    UNIQUE(source_ip, rule_name, first_seen)
+)
+table event_statistics (tabela lub widok: event_statistics)
+CREATE TABLE event_statistics (
+    source_ip   TEXT PRIMARY KEY,
+    event_count INTEGER NOT NULL CHECK(event_count >= 0),
+    last_seen   TEXT NOT NULL
+)
+table network_events (tabela lub widok: network_events)
+CREATE TABLE network_events (
+    event_id    INTEGER PRIMARY KEY,
+    event_key   TEXT NOT NULL UNIQUE,
+    timestamp   TEXT NOT NULL,
+    sensor_id   INTEGER NOT NULL REFERENCES sensors(sensor_id) ON DELETE RESTRICT,
+    src_ip      TEXT NOT NULL,
+    dst_ip      TEXT NOT NULL,
+    src_port    INTEGER CHECK(src_port BETWEEN 1 AND 65535),
+    dst_port    INTEGER NOT NULL CHECK(dst_port BETWEEN 1 AND 65535),
+    protocol    TEXT NOT NULL CHECK(protocol IN ('TCP', 'UDP', 'ICMP')),
+    event_type  TEXT NOT NULL,
+    action      TEXT NOT NULL CHECK(action IN ('ALLOW', 'BLOCK')),
+    bytes       INTEGER NOT NULL DEFAULT 0 CHECK(bytes >= 0),
+    duration_ms INTEGER NOT NULL DEFAULT 0 CHECK(duration_ms >= 0)
+)
+table sensors (tabela lub widok: sensors)
+CREATE TABLE sensors (
+    sensor_id   INTEGER PRIMARY KEY,
+    sensor_name TEXT NOT NULL UNIQUE,
+    location    TEXT NOT NULL DEFAULT 'unknown'
+)
+trigger log_alert_status_change (tabela lub widok: alerts)
+CREATE TRIGGER log_alert_status_change
+AFTER UPDATE OF status ON alerts
+FOR EACH ROW
+WHEN OLD.status <> NEW.status
+BEGIN
+    INSERT INTO alert_status_history (alert_id, old_status, new_status)
+    VALUES (NEW.alert_id, OLD.status, NEW.status);
+END
+view suspicious_sources (tabela lub widok: suspicious_sources)
+CREATE VIEW suspicious_sources AS
+SELECT src_ip, COUNT(*) AS failed_logins, MIN(timestamp) AS first_failure,
+       MAX(timestamp) AS last_failure
+FROM network_events
+WHERE event_type='AUTH_FAILURE'
+GROUP BY src_ip HAVING COUNT(*) >= 5
+
+=== 2. IMPORT I IDEMPOTENCJA ===
+Zdarzenia przed importem: 896
+Import 1: dodano 2, razem 898
+Import 2: dodano 0, razem 898
+OK: drugi import tej samej partii nie zwiększył liczby wierszy.
+
+=== 3. TRIGGER AUDYTU I ROLLBACK ===
+Status przed UPDATE: OPEN
+Status w transakcji: INVESTIGATING
+Nowe wiersze (history_id, alert_id, old_status, new_status, changed_at):
+(1, 1, 'OPEN', 'INVESTIGATING', '2026-11-18 15:40:41')
+Status po ROLLBACK: OPEN
+Wiersze historii przed i po ROLLBACK: 0 -> 0
+OK: wycofano zmianę statusu i wpis w historii.
+
+=== 4. EXPLAIN QUERY PLAN NA KOPII BAZY ===
+Bez idx_events_src_time:
+SCAN network_events
+USE TEMP B-TREE FOR ORDER BY
+
+Z idx_events_src_time:
+SEARCH network_events USING INDEX idx_events_src_time (src_ip=? AND timestamp>?)
+OK: z indeksem SQLite wyszukuje według adresu IP i zakresu czasu.
+
+Wszystkie testy zadania B przeszły.
