@@ -1,0 +1,116 @@
+================================================================================
+STEP 1: INSPECT sqlite_schema (Tables, Keys, Constraints, Triggers, Indexes)
+================================================================================
+[TABLE] alert_status_history (on alert_status_history):
+CREATE TABLE alert_status_history (
+    history_id INTEGER PRIMARY KEY,
+    alert_id   INTEGER NOT NULL REFERENCES alerts(alert_id) ON DELETE RESTRICT,
+    old_status TEXT NOT NULL,
+    new_status TEXT NOT NULL,
+    changed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+)
+------------------------------------------------------------
+[TABLE] alerts (on alerts):
+CREATE TABLE alerts (
+    alert_id   INTEGER PRIMARY KEY,
+    source_ip  TEXT NOT NULL,
+    rule_name  TEXT NOT NULL,
+    status     TEXT NOT NULL CHECK(status IN ('OPEN','INVESTIGATING','CLOSED','FALSE_POSITIVE')),
+    first_seen TEXT NOT NULL,
+    last_seen  TEXT NOT NULL,
+    event_count INTEGER NOT NULL CHECK(event_count > 0),
+    UNIQUE(source_ip, rule_name, first_seen)
+)
+------------------------------------------------------------
+[TABLE] event_statistics (on event_statistics):
+CREATE TABLE event_statistics (
+    source_ip   TEXT PRIMARY KEY,
+    event_count INTEGER NOT NULL CHECK(event_count >= 0),
+    last_seen   TEXT NOT NULL
+)
+------------------------------------------------------------
+[TABLE] network_events (on network_events):
+CREATE TABLE network_events (
+    event_id    INTEGER PRIMARY KEY,
+    event_key   TEXT NOT NULL UNIQUE,
+    timestamp   TEXT NOT NULL,
+    sensor_id   INTEGER NOT NULL REFERENCES sensors(sensor_id) ON DELETE RESTRICT,
+    src_ip      TEXT NOT NULL,
+    dst_ip      TEXT NOT NULL,
+    src_port    INTEGER CHECK(src_port BETWEEN 1 AND 65535),
+    dst_port    INTEGER NOT NULL CHECK(dst_port BETWEEN 1 AND 65535),
+    protocol    TEXT NOT NULL CHECK(protocol IN ('TCP', 'UDP', 'ICMP')),
+    event_type  TEXT NOT NULL,
+    action      TEXT NOT NULL CHECK(action IN ('ALLOW', 'BLOCK')),
+    bytes       INTEGER NOT NULL DEFAULT 0 CHECK(bytes >= 0),
+    duration_ms INTEGER NOT NULL DEFAULT 0 CHECK(duration_ms >= 0)
+)
+------------------------------------------------------------
+[TABLE] sensors (on sensors):
+CREATE TABLE sensors (
+    sensor_id   INTEGER PRIMARY KEY,
+    sensor_name TEXT NOT NULL UNIQUE,
+    location    TEXT NOT NULL DEFAULT 'unknown'
+)
+------------------------------------------------------------
+[INDEX] idx_alert_history_alert_time (on alert_status_history):
+CREATE INDEX idx_alert_history_alert_time
+    ON alert_status_history(alert_id, changed_at)
+------------------------------------------------------------
+[INDEX] idx_events_src_time (on network_events):
+CREATE INDEX idx_events_src_time
+    ON network_events(src_ip, timestamp)
+------------------------------------------------------------
+[INDEX] idx_events_type_time (on network_events):
+CREATE INDEX idx_events_type_time
+    ON network_events(event_type, timestamp)
+------------------------------------------------------------
+[TRIGGER] log_alert_status_change (on alerts):
+CREATE TRIGGER log_alert_status_change
+AFTER UPDATE OF status ON alerts
+FOR EACH ROW
+WHEN OLD.status <> NEW.status
+BEGIN
+    INSERT INTO alert_status_history (alert_id, old_status, new_status)
+    VALUES (NEW.alert_id, OLD.status, NEW.status);
+END
+------------------------------------------------------------
+[VIEW] suspicious_sources (on suspicious_sources):
+CREATE VIEW suspicious_sources AS
+SELECT src_ip, COUNT(*) AS failed_logins, MIN(timestamp) AS first_failure,
+       MAX(timestamp) AS last_failure
+FROM network_events
+WHERE event_type='AUTH_FAILURE'
+GROUP BY src_ip HAVING COUNT(*) >= 5
+------------------------------------------------------------
+
+================================================================================
+STEP 2 & 3: IDEMPOTENT IMPORT (12-column INSERT + ON CONFLICT(event_key) DO NOTHING)
+================================================================================
+Initial row count in network_events: 896
+Prepared batch size: 898 rows (896 existing CSV rows + 2 new events)
+Row count after Run 1: 898 (Inserted: 2, Ignored duplicates: 896)
+Row count after Run 2: 898 (Inserted: 0)
+IDEMPOTENCY PROVEN: Second run added 0 rows; row count remained identical.
+
+================================================================================
+STEP 4: AUDIT TRIGGER & TRANSACTION ROLLBACK TEST
+================================================================================
+Before transaction - alert 1: (1, '198.51.100.66', 'PORT_SCAN', 'OPEN')
+Before transaction - alert_status_history count: 0
+Inside transaction (after UPDATE) - alert 1: (1, 'INVESTIGATING')
+Inside transaction - trigger row in alert_status_history: [(1, 1, 'OPEN', 'INVESTIGATING', '2026-11-18 15:48:01')]
+Executed ROLLBACK.
+After ROLLBACK - alert 1: (1, 'OPEN')
+After ROLLBACK - alert_status_history count: 0
+AUDIT & ATOMICITY PROVEN: Trigger fired inside transaction and rolled back cleanly.
+
+================================================================================
+STEP 5: OPTIMISE (EXPLAIN QUERY PLAN BEFORE vs AFTER idx_events_src_time)
+================================================================================
+Query Plan BEFORE idx_events_src_time (Full Table Scan + Temp B-Tree Sort):
+   (3, 0, 0, 'SCAN network_events')
+   (20, 0, 0, 'USE TEMP B-TREE FOR ORDER BY')
+
+Query Plan AFTER idx_events_src_time (Covered Range Search, No Temp Sort):
+   (4, 0, 0, 'SEARCH network_events USING INDEX idx_events_src_time (src_ip=? AND timestamp>? AND timestamp<?)')
