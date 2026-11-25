@@ -1,0 +1,44 @@
+from pydantic import BaseModel, Field
+
+
+class OrderInput(BaseModel):
+    vehicle_id: int = Field(gt=0)
+    mechanic_id: int = Field(gt=0)
+    description: str = Field(min_length=1)
+
+
+class LineInput(BaseModel):
+    service_id: int = Field(gt=0)
+    hours_worked: float = Field(gt=0, allow_inf_nan=False)
+    final_price: float = Field(ge=0, allow_inf_nan=False)
+
+
+class LineOutput(BaseModel):
+    service_id: int
+    service_name: str
+    hours_worked: float
+    final_price: float
+
+
+class OrderOutput(BaseModel):
+    id: int
+    vehicle_id: int
+    mechanic_id: int
+    received_at: str
+    completed_at: str | None
+    status: str
+    description: str
+    services: list[LineOutput]
+    total_price: float
+
+
+class AddedOutput(BaseModel):
+    order_id: int
+    service_id: int
+    status: str
+
+
+class FinishedOutput(BaseModel):
+    order_id: int
+    status: str
+    completed_at: str
